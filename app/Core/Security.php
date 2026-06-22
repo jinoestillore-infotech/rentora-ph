@@ -1,9 +1,4 @@
 <?php
-/**
- * File Location: app/Core/Security.php
- * File Name: Security.php
- * Description: Core security implementation for RENTORA PH.
- */
 
 namespace App\Core;
 
