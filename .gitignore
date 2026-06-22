@@ -1,0 +1,20 @@
+.env
+.env.local
+.env.*.local
+
+Operating System files
+
+.DS_Store
+Thumbs.db
+
+.idea/
+.vscode/
+*.suo
+.ntvs
+*.njsproj
+*.sln
+*.swp
+
+/vendor/
+
+*.log

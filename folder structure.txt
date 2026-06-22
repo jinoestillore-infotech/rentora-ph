@@ -1,0 +1,30 @@
+project/
+│
+│
+├── app/
+│   ├── Controllers/
+│   │   └── UserController.php
+│   │
+│   ├── Models/
+│   │   └── User.php
+│   │
+│   ├── Services/
+│   │   └── UserService.php
+│   │
+│   └── Core/
+│       ├── Router.php
+│       └── Database.php
+│
+├── views/
+│   ├── Admin/
+│   │   └── dashboard.php
+│   │   └── user-management.php
+│   │
+│   │
+│   ├── Owner/
+│   │   └── dashboard.php
+│   │   └── tenant-management.php
+│   │
+│   │
+│   ├── Tenant/
+│   │   └── index.php

@@ -1,0 +1,69 @@
+RENTORA PH: Web-Based Online Boarding House Finder and Management System Using Role-Based Access Control
+
+RENTORA PH is a web-based platform designed to simplify 
+the process of finding, renting, and managing boarding 
+houses. The system connects tenants with boarding house 
+owners through an online marketplace where available rooms 
+can be searched, viewed, and applied for conveniently.
+
+The platform implements Role-Based Access Control (RBAC) 
+to provide specific functionalities for three user roles: 
+Admin, Owner (Boarding House Owner), and Tenant. Administrators 
+oversee the entire system, boarding house owners manage 
+their properties and tenants, while tenants can search for 
+boarding houses, submit rental applications, and make 
+online rent payments.
+
+By centralizing property listings, tenant management, 
+and rental transactions into a single platform, 
+RENTORA PH aims to improve accessibility, efficiency, 
+and communication between boarding house owners and tenants.
+
+
+Roles:
+
+
+
+1. Admin
+
+- Manage all users
+
+- Approve boarding house listings
+
+- Manage reports and complaints
+
+- View system analytics
+
+
+
+2. Boarding House Owner
+
+- Register boarding houses
+
+- Add rooms and prices
+
+- Upload photos
+
+- Approve/reject tenant applications
+
+- Track payments
+
+- Manage tenants
+
+
+
+3. Tenant
+
+- Register account
+
+- Search boarding houses
+
+- Filter by location, price, amenities
+
+- View room details and photos
+
+- Apply/book a room
+
+- Pay rent
+
+- Submit maintenance requests
