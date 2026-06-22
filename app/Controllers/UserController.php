@@ -20,7 +20,7 @@ class UserController {
     public function showRegisterForm(): void {
         Security::startSecureSession();
         // The view would render here. HTML structure will draw its CSRF using Security::csrfField()
-        require_once dirname(__DIR__, 2) . '/views/register.php';
+        require_once dirname(__DIR__, 2) . '/views/auth/register.php';
     }
 
     /**
@@ -34,7 +34,7 @@ class UserController {
         $csrfToken = $_POST['csrf_token'] ?? '';
         if (!Security::validateCsrfToken($csrfToken)) {
             $_SESSION['error'] = "Invalid CSRF verification token. Please try again.";
-            header("Location: /register");
+            header("Location: " . BASE_URL . "/register");
             exit();
         }
 
@@ -47,7 +47,7 @@ class UserController {
 
             // 4. Set Success Feedback and Redirect to Login Screen
             $_SESSION['success'] = "Registration successful! You can now log in.";
-            header("Location: /login");
+            header("Location: " . BASE_URL . "/login");
             exit();
 
         } catch (Exception $e) {
@@ -61,7 +61,7 @@ class UserController {
                 'role'      => $cleanData['role'] ?? ''
             ];
 
-            header("Location: /register");
+            header("Location: " . BASE_URL . "/register");
             exit();
         }
     }

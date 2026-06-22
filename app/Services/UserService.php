@@ -13,13 +13,43 @@ class UserService {
     }
 
     /**
+     * Authenticates a user based on email and password.
+     * @param string $email
+     * @param string $password
+     * @return array
+     * @throws Exception For invalid inputs, missing accounts, suspended status, or bad passwords
+     */
+    public function authenticateUser(string $email, string $password): array {
+        if (empty($email) || empty($password)) {
+            throw new Exception("Please fill in both Email and Password fields.");
+        }
+
+        // Fetch user from DB
+        $user = $this->userModel->findByEmail($email);
+        if (!$user) {
+            throw new Exception("Invalid login credentials.");
+        }
+
+        // Check if account status allows access
+        if ($user['status'] !== 'Active') {
+            throw new Exception("Your account has been {$user['status']}. Please contact system support.");
+        }
+
+        // Verify hash security
+        if (!password_verify($password, $user['password'])) {
+            throw new Exception("Invalid login credentials.");
+        }
+
+        return $user;
+    }
+
+    /**
      * Business logic and validation process for registering a new user.
-     * * @param array $rawInputs Raw data from POST
+     * @param array $rawInputs Raw data from POST
      * @return int The newly created User ID
      * @throws Exception For invalid parameters, password mismatch, or duplicate user
      */
     public function registerUser(array $rawInputs): int {
-        // Essential field checks
         $required = ['firstname', 'lastname', 'email', 'password', 'confirm_password', 'role'];
         foreach ($required as $field) {
             if (empty($rawInputs[$field])) {
@@ -27,25 +57,21 @@ class UserService {
             }
         }
 
-        // Validate emails
         $email = filter_var($rawInputs['email'], FILTER_VALIDATE_EMAIL);
         if (!$email) {
             throw new Exception("Please enter a valid email address.");
         }
 
-        // Validate Role Constraints to enforce RBAC safety
         $allowedRoles = ['Admin', 'Owner', 'Tenant'];
         $role = $rawInputs['role'];
         if (!in_array($role, $allowedRoles)) {
             throw new Exception("Invalid registration role selected.");
         }
 
-        // Block unauthorized direct registration of Admins
         if ($role === 'Admin') {
             throw new Exception("Administrators cannot register online.");
         }
 
-        // Validate password equality and strength
         if ($rawInputs['password'] !== $rawInputs['confirm_password']) {
             throw new Exception("Passwords do not match.");
         }
@@ -54,12 +80,10 @@ class UserService {
             throw new Exception("Password must be at least 8 characters long.");
         }
 
-        // Check for duplicate accounts
         if ($this->userModel->emailExists($email)) {
             throw new Exception("This email address is already registered.");
         }
 
-        // Prepare sanitized inputs and secure password hash
         $hashedPassword = password_hash($rawInputs['password'], PASSWORD_BCRYPT, ['cost' => 12]);
 
         $userData = [
