@@ -1,5 +1,32 @@
 <?php
 
+
+// Establish login state variables safely
+$isLoggedIn = isset($_SESSION['user_id']);
+$userFirstName = $_SESSION['firstname'] ?? '';
+$userRole = $_SESSION['role'] ?? '';
+
+// Determine active page state based on the request URI to swap guest options
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+$isLoginPage = (strpos($requestUri, '/login') !== false);
+$isRegisterPage = (strpos($requestUri, '/register') !== false);
+
+// Determine role-based dashboard landing pages
+$dashboardUrl = BASE_URL . '/';
+if ($isLoggedIn) {
+    switch ($userRole) {
+        case 'Admin':
+            $dashboardUrl = BASE_URL . '/admin/dashboard';
+            break;
+        case 'Owner':
+            $dashboardUrl = BASE_URL . '/owner/dashboard';
+            break;
+        case 'Tenant':
+        default:
+            $dashboardUrl = BASE_URL . '/tenant/dashboard';
+            break;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -92,7 +119,8 @@
 <!-- Minimalist Navigation Bar -->
 <nav class="navbar navbar-expand-lg py-3">
     <div class="container">
-        <a class="navbar-brand" href="/">
+        <!-- Main Brand Link dynamically resolving based on root directory -->
+        <a class="navbar-brand" href="<?php echo BASE_URL; ?>/">
             <i class="fa-solid fa-house-chimney me-2 text-dark"></i>RENTORA PH
         </a>
         <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,12 +128,75 @@
         </button>
         <div class="collapse navbar-collapse" id="mainNavbar">
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link px-3" href="/"><i class="fa-solid fa-magnifying-glass me-1"></i> Browse Rooms</a>
-                </li>
-                <!-- <li class="nav-item">
-                    <a class="nav-link px-3 fw-bold text-dark" href="/login"><i class="fa-solid fa-user me-1"></i> Log In</a>
-                </li> -->
+                
+                <?php if ($isLoggedIn): ?>
+                    <!-- LOGGED IN NAVIGATION STATES -->
+                    <?php if ($userRole === 'Owner'): ?>
+                        <!-- Owners see Owner Dashboard and Logout -->
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="<?php echo $dashboardUrl; ?>">
+                                <i class="fa-solid fa-chart-line me-1"></i> Owner Dashboard
+                            </a>
+                        </li>
+                    <?php elseif ($userRole === 'Tenant'): ?>
+                        <!-- Tenants see Browse Rooms and Logout -->
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="<?php echo BASE_URL; ?>/">
+                                <i class="fa-solid fa-magnifying-glass me-1"></i> Browse Rooms
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <!-- Admins see Admin Dashboard and Logout -->
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="<?php echo $dashboardUrl; ?>">
+                                <i class="fa-solid fa-gauge me-1"></i> Admin Dashboard
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                    
+                    <!-- <li class="nav-item border-start border-light-subtle ps-2 ms-2 d-none d-lg-block">
+                        <span class="navbar-text text-muted small pe-2">
+                            Hi, <strong><?php echo htmlspecialchars($userFirstName); ?></strong>!
+                        </span>
+                    </li> -->
+                    
+                    <li class="nav-item">
+                        <a class="nav-link px-3 fw-bold text-danger" href="<?php echo BASE_URL; ?>/logout">
+                            <i class="fa-solid fa-right-from-bracket me-1"></i> Log Out
+                        </a>
+                    </li>
+
+                <?php else: ?>
+                    <!-- GUEST (NOT LOGGED IN) NAVIGATION STATES -->
+                    <?php if ($isLoginPage): ?>
+                        <!-- If on Login page, show only Register link -->
+                        <li class="nav-item">
+                            <a class="btn btn-dark btn-sm text-white py-1.5 px-3" href="<?php echo BASE_URL; ?>/register">
+                                Register
+                            </a>
+                        </li>
+                    <?php elseif ($isRegisterPage): ?>
+                        <!-- If on Register page, show only Login link -->
+                        <li class="nav-item">
+                            <a class="nav-link px-3 fw-bold text-dark" href="<?php echo BASE_URL; ?>/login">
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Log In
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <!-- Default view for home page or other pages when logged out -->
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="<?php echo BASE_URL; ?>/login">
+                                <i class="fa-solid fa-right-to-bracket me-1"></i> Log In
+                            </a>
+                        </li>
+                        <li class="nav-item ms-lg-2 mt-2 mt-lg-0">
+                            <a class="btn btn-dark btn-sm text-white py-1.5 px-3" href="<?php echo BASE_URL; ?>/register">
+                                Register
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                <?php endif; ?>
+                
             </ul>
         </div>
     </div>

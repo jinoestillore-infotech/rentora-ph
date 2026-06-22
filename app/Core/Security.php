@@ -4,7 +4,7 @@ namespace App\Core;
 
 /**
  * Class Security
- * * Provides unified, comprehensive security services for RENTORA PH:
+ * Provides unified, comprehensive security services for RENTORA PH:
  * 1. Secure Session Management (Hijacking & Fixation prevention)
  * 2. Cross-Site Request Forgery (CSRF) protection
  * 3. Cross-Site Scripting (XSS) input sanitization
@@ -44,10 +44,11 @@ class Security {
             $_SESSION['fingerprint'] = $fingerprint;
             $_SESSION['last_activity'] = time();
         } else {
-            // If fingerprint mismatches, destroy session immediately
+            // If fingerprint mismatches, destroy session immediately and redirect safely using BASE_URL
             if ($_SESSION['fingerprint'] !== $fingerprint) {
                 self::destroySession();
-                header("Location: /login?error=session_invalid");
+                $loginUrl = defined('BASE_URL') ? BASE_URL . '/login?error=session_invalid' : '/login?error=session_invalid';
+                header("Location: " . $loginUrl);
                 exit();
             }
         }
@@ -83,7 +84,7 @@ class Security {
 
     /**
      * Generates a secure CSRF token and registers it in the session.
-     * * @return string
+     * @return string
      */
     public static function generateCsrfToken(): string {
         self::startSecureSession();
@@ -95,7 +96,7 @@ class Security {
 
     /**
      * Validates a submitted CSRF token.
-     * * @param string|null $token The token sent via POST, headers, or parameters.
+     * @param string|null $token The token sent via POST, headers, or parameters.
      * @return bool
      */
     public static function validateCsrfToken(?string $token): bool {
@@ -109,7 +110,7 @@ class Security {
 
     /**
      * Renders a hidden HTML input field containing the active CSRF token.
-     * * @return string
+     * @return string
      */
     public static function csrfField(): string {
         $token = self::generateCsrfToken();
@@ -140,7 +141,7 @@ class Security {
 
     /**
      * Checks if an IP or Email is currently rate-limited on login attempts.
-     * * @param \PDO $db Database connection instance
+     * @param \PDO $db Database connection instance
      * @param string $email The email attempting login
      * @param int $maxAttempts Max failed attempts allowed before lockout
      * @param int $lockoutMinutes Time window in minutes to look back
@@ -156,7 +157,6 @@ class Security {
               AND attempted_at > NOW() - INTERVAL :minutes MINUTE
         ");
         
-        // PDO binding parameters with types
         $stmt->bindValue(':ip', $ip, \PDO::PARAM_STR);
         $stmt->bindValue(':email', $email, \PDO::PARAM_STR);
         $stmt->bindValue(':minutes', $lockoutMinutes, \PDO::PARAM_INT);
@@ -167,7 +167,7 @@ class Security {
 
     /**
      * Registers a failed login attempt in the database.
-     * * @param \PDO $db Database connection instance
+     * @param \PDO $db Database connection instance
      * @param string $email The email that failed to log in
      * @return bool
      */
@@ -187,7 +187,7 @@ class Security {
 
     /**
      * Clears failed login attempts for an IP/email after successful authentication.
-     * * @param \PDO $db Database connection instance
+     * @param \PDO $db Database connection instance
      * @param string $email The email to clear
      * @return bool
      */
