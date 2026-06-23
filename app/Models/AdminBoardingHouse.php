@@ -63,6 +63,30 @@ class AdminBoardingHouse {
     }
 
     /**
+     * Fetch all approved boarding houses along with room counts.
+     */
+    public function getApprovedProperties(): array {
+        $sql = "SELECT bh.*, u.firstname, u.lastname, u.email as owner_email,
+                (SELECT COUNT(*) FROM rooms r WHERE r.boarding_house_id = bh.id) as total_rooms
+                FROM boarding_houses bh
+                JOIN users u ON bh.owner_id = u.id
+                WHERE bh.status = 'Approved'
+                ORDER BY bh.created_at DESC";
+        
+        $stmt = $this->db->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Securely deletes a boarding house listing from database records.
+     */
+    public function delete(int $id): bool {
+        $sql = "DELETE FROM boarding_houses WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $id]);
+    }
+
+    /**
      * Update the approval status of a boarding house.
      */
     public function updateStatus(int $id, string $status): bool {

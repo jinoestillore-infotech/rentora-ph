@@ -11,6 +11,11 @@ require_once dirname(__DIR__) . '/templates/header.php';
 $pendingProperties = $pendingProperties ?? [];
 ?>
 
+<style>
+    .hover-card:hover {
+        border: 1px solid black !important;
+    }
+</style>
 <div class="container my-5">
     
     <!-- Title banner header -->
@@ -105,6 +110,50 @@ $pendingProperties = $pendingProperties ?? [];
         </div>
     </div>
 
+    <!-- Navigation Launchpad Block -->
+    <div class="card shadow-sm border border-light-subtle rounded-1 bg-white mb-5">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-3">
+                <div class="bg-dark text-white rounded-1 p-2 me-3 d-flex align-items-center justify-content-center" style="width: 38px; height: 38px;">
+                    <i class="fa-solid fa-rocket fs-5"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-dark mb-0">System Control Launchpad</h5>
+                    <p class="text-muted small mb-0">Quick navigation actions to manage live boarding houses on Rentora PH.</p>
+                </div>
+            </div>
+            
+            <div class="row g-3">
+                <div class="col-md-6 col-12">
+                    <a href="<?php echo BASE_URL; ?>/admin/approved-houses" class="card text-decoration-none border border-light-subtle rounded-1 p-3 bg-light-subtle hover-card transition-all h-100" style="transition: all 0.2s ease-in-out;">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white border rounded-1 p-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
+                                <i class="fa-solid fa-building-shield text-dark fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">Approved Listings Registry</h6>
+                                <p class="text-muted small mb-0">Manage verified live properties, inspect documents, or revoke access credentials.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-6 col-12">
+                    <div class="card border border-light-subtle rounded-1 p-3 bg-light-subtle h-100 opacity-75">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white border rounded-1 p-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
+                                <i class="fa-solid fa-users-gear text-secondary fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-secondary mb-1">User & Owner Accounts (Locked)</h6>
+                                <p class="text-muted small mb-0">Monitor platform partner accounts, review registration limits, or suspend users.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Listings Verification List -->
     <div class="card shadow-sm border border-light-subtle rounded-1 bg-white mb-5">
         <div class="card-header bg-white py-3 border-bottom border-light-subtle d-flex justify-content-between align-items-center">
@@ -134,7 +183,7 @@ $pendingProperties = $pendingProperties ?? [];
                         <tr>
                             <td colspan="6" class="text-center py-5 text-muted">
                                 <i class="fa-solid fa-folder-open fa-2x d-block mb-3 opacity-50"></i>
-                                <span class="small">No onboarding files registered. All clear!</span>
+                                <span class="small">No pending onboarding files registered. All clear!</span>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -171,7 +220,7 @@ $pendingProperties = $pendingProperties ?? [];
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-3 px-4 text-end">
-                                    <a href="<?php echo BASE_URL; ?>/admin/verify-house?house_id=<?php echo (int)$house['id']; ?>" class="btn btn-dark btn-sm py-1.5 px-3">
+                                    <a href="<?php echo BASE_URL; ?>/admin/verify-house/<?php echo (int)$house['id']; ?>" class="btn btn-dark btn-sm py-1.5 px-3">
                                         <i class="fa-solid fa-shield-halved me-1"></i> Verify File
                                     </a>
                                 </td>

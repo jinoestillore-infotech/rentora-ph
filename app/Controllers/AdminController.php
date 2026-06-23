@@ -60,10 +60,10 @@ class AdminController {
      * Render dedicated split comparison verification display page.
      * Maps to GET /admin/verify-house
      */
-    public function showVerifyForm(): void {
+    public function showVerifyForm(mixed $houseId = 0): void {
         $this->checkAdminAccess();
 
-        $houseId = isset($_GET['house_id']) ? (int)$_GET['house_id'] : 0;
+        $houseId = (int)$houseId;
         $house = $this->adminModel->findDetailsById($houseId);
 
         if (!$house) {
@@ -77,6 +77,73 @@ class AdminController {
         unset($_SESSION['error']);
 
         require_once dirname(__DIR__, 2) . '/views/admin/verify_house.php';
+    }
+
+    /**
+     * Render the list of approved boarding houses.
+     * Maps to GET /admin/approved-houses
+     */
+    public function approvedList(): void {
+        $this->checkAdminAccess();
+
+        $properties = $this->adminModel->getApprovedProperties();
+        $stats = $this->adminModel->getGlobalStats();
+
+        $success = $_SESSION['success'] ?? null;
+        $error = $_SESSION['error'] ?? null;
+        unset($_SESSION['success'], $_SESSION['error']);
+
+        require_once dirname(__DIR__, 2) . '/views/admin/approved_houses.php';
+    }
+
+    /**
+     * Render detail inspector for a specific approved asset.
+     * Maps to GET /admin/approved-house/view
+     */
+    public function showApprovedDetail(mixed $houseId = 0): void {
+        $this->checkAdminAccess();
+
+        $houseId = (int)$houseId;
+        $house = $this->adminModel->findDetailsById($houseId);
+
+        if (!$house || $house['status'] !== 'Approved') {
+            $_SESSION['error'] = "Boarding House record not found or is not approved.";
+            header("Location: " . BASE_URL . "/admin/approved-houses");
+            exit();
+        }
+
+        $error = $_SESSION['error'] ?? null;
+        unset($_SESSION['error']);
+
+        require_once dirname(__DIR__, 2) . '/views/admin/view_approved.php';
+    }
+
+    /**
+     * Handles administrative cascading delete action.
+     * Maps to POST /admin/approved-house/delete
+     */
+    public function handleDelete(): void {
+        $this->checkAdminAccess();
+
+        $csrfToken = $_POST['csrf_token'] ?? '';
+        if (!Security::validateCsrfToken($csrfToken)) {
+            $_SESSION['error'] = "Invalid CSRF verification token. Please try again.";
+            header("Location: " . BASE_URL . "/admin/approved-houses");
+            exit();
+        }
+
+        $houseId = isset($_POST['house_id']) ? (int)$_POST['house_id'] : 0;
+
+        try {
+            $this->adminService->deleteProperty($houseId);
+            $_SESSION['success'] = "Approved property was permanently deleted from the system.";
+            header("Location: " . BASE_URL . "/admin/approved-houses");
+            exit();
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            header("Location: " . BASE_URL . "/admin/approved-house/view?house_id=" . $houseId);
+            exit();
+        }
     }
 
     /**

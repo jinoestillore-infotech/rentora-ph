@@ -33,16 +33,24 @@ class Router {
         // Remove query strings from path lookup
         $path = explode('?', $path)[0];
 
-        if (isset($this->routes[$method][$path])) {
-            $callback = $this->routes[$method][$path];
-            $controllerClass = $callback[0];
-            $methodName = $callback[1];
+        foreach ($this->routes[$method] ?? [] as $routePath => $callback) {
+            // Convert placeholders like {id} into named regex capture groups
+            $pattern = preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<$1>[^/]+)', $routePath);
+            $pattern = '#^' . $pattern . '$#';
 
-            if (class_exists($controllerClass)) {
-                $controller = new $controllerClass();
-                if (method_exists($controller, $methodName)) {
-                    $controller->$methodName();
-                    return;
+            if (preg_match($pattern, $path, $matches)) {
+                // Filter down to only named capture string keys
+                $params = array_filter($matches, 'is_string', ARRAY_FILTER_USE_KEY);
+
+                $controllerClass = $callback[0];
+                $methodName = $callback[1];
+
+                if (class_exists($controllerClass)) {
+                    $controller = new $controllerClass();
+                    if (method_exists($controller, $methodName)) {
+                        call_user_func_array([$controller, $methodName], $params);
+                        return;
+                    }
                 }
             }
         }

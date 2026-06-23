@@ -61,8 +61,13 @@ $router->post('/owner/add-house', [OwnerController::class, 'addHouse']);
 
 // Admin Route Handlers
 $router->get('/admin/dashboard', [AdminController::class, 'dashboard']);
-$router->get('/admin/verify-house', [AdminController::class, 'showVerifyForm']);
+$router->get('/admin/verify-house/{houseId}', [AdminController::class, 'showVerifyForm']);
 $router->post('/admin/verify-house', [AdminController::class, 'handleVerify']);
+// New Approved Property Management Handlers
+$router->get('/admin/approved-houses', [AdminController::class, 'approvedList']);
+$router->get('/admin/approved-house/view/{houseId}', [AdminController::class, 'showApprovedDetail']);
+$router->post('/admin/approved-house/delete', [AdminController::class, 'handleDelete']);
+
 
 // Fire router engine to resolve the request path
 $router->resolve();
