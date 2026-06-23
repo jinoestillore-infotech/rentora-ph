@@ -5,6 +5,57 @@ use App\Core\Security;
 // Include standard clean header template
 require_once dirname(__DIR__) . '/templates/header.php';
 
+$boholTowns = [
+    'Alburquerque',
+    'Alicia',
+    'Anda',
+    'Antequera',
+    'Baclayon',
+    'Balilihan',
+    'Batuan',
+    'Bien Unido',
+    'Bilar',
+    'Buenavista',
+    'Calape',
+    'Candijay',
+    'Carmen',
+    'Catigbian',
+    'Clarin',
+    'Corella',
+    'Cortes',
+    'Dagohoy',
+    'Danao',
+    'Dauis',
+    'Dimiao',
+    'Duero',
+    'Garcia Hernandez',
+    'Getafe',
+    'Guindulman',
+    'Inabanga',
+    'Jagna',
+    'Lila',
+    'Loay',
+    'Loboc',
+    'Loon',
+    'Mabini',
+    'Maribojoc',
+    'Panglao',
+    'Pilar',
+    'President Carlos P. Garcia',
+    'Sagbayan',
+    'San Isidro',
+    'San Miguel',
+    'Sevilla',
+    'Sierra Bullones',
+    'Sikatuna',
+    'Talibon',
+    'Trinidad',
+    'Tubigon',
+    'Ubay',
+    'Valencia',
+    'Tagbilaran City'
+];
+
 // Fetch old input values and session error alerts if present
 $error = $_SESSION['error'] ?? null;
 $old = $_SESSION['old_input'] ?? [];
@@ -15,7 +66,7 @@ unset($_SESSION['error'], $_SESSION['old_input']);
 
 <div class="container my-5 mt-3">
     <div class="row justify-content-center">
-        <div class="col-lg-6 col-md-8 col-12">
+        <div class="col-lg-7 col-md-9 col-12">
             
             <!-- Breadcrumb Navigation -->
             <div class="mb-3">
@@ -32,7 +83,7 @@ unset($_SESSION['error'], $_SESSION['old_input']);
                 </div>
             <?php endif; ?>
 
-            <div class="card shadow-sm border rounded-5 bg-white">
+            <div class="card shadow-sm border rounded-1 bg-white">
                 <div class="bg-transparent border-bottom border-light-subtle p-4">
                     <h5 class="card-title fw-bold text-dark mb-0">
                         <i class="fa-solid fa-house-chimney me-2"></i>Register Boarding House
@@ -40,7 +91,8 @@ unset($_SESSION['error'], $_SESSION['old_input']);
                     <p class="text-muted mb-0 small">Please fill out the details below. This property will require admin approval before you can add rooms.</p>
                 </div>
                 
-                <form action="<?php echo BASE_URL; ?>/owner/add-house" method="POST">
+                <!-- Updated with enctype attribute to handle file uploads -->
+                <form action="<?php echo BASE_URL; ?>/owner/add-house" method="POST" enctype="multipart/form-data">
                     <!-- Security Verification Field -->
                     <?php echo Security::csrfField(); ?>
 
@@ -55,18 +107,32 @@ unset($_SESSION['error'], $_SESSION['old_input']);
                                        value="<?php echo htmlspecialchars($old['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
                             </div>
 
-                            <!-- Town selection localized to Bohol municipalities -->
-                            <div class="col-md-6">
-                                <label for="town">Town / Municipality <span class="text-danger">*</span></label>
-                                <select class="form-select" id="town" name="town" required>
-                                    <option value="" disabled <?php echo empty($old['town']) ? 'selected' : ''; ?>>-- Select Town --</option>
-                                    <option value="Inabanga" <?php echo (isset($old['town']) && $old['town'] === 'Inabanga') ? 'selected' : ''; ?>>Inabanga</option>
-                                    <option value="Tubigon" <?php echo (isset($old['town']) && $old['town'] === 'Tubigon') ? 'selected' : ''; ?>>Tubigon</option>
-                                    <option value="Clarin" <?php echo (isset($old['town']) && $old['town'] === 'Clarin') ? 'selected' : ''; ?>>Clarin</option>
-                                    <option value="Sagbayan" <?php echo (isset($old['town']) && $old['town'] === 'Sagbayan') ? 'selected' : ''; ?>>Sagbayan</option>
-                                    <option value="Loon" <?php echo (isset($old['town']) && $old['town'] === 'Loon') ? 'selected' : ''; ?>>Loon</option>
-                                    <option value="Tagbilaran" <?php echo (isset($old['town']) && $old['town'] === 'Tagbilaran') ? 'selected' : ''; ?>>Tagbilaran</option>
-                                </select>
+                            <!-- Searchable Town Selection Input Group -->
+                            <div class="col-md-6 position-relative" id="town-dropdown-container">
+                                <label for="town_search">Town / Municipality <span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="town_search" 
+                                           placeholder="Type to search town..." 
+                                           value="<?php echo htmlspecialchars($old['town'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" 
+                                           autocomplete="off" required>
+                                </div>
+                                
+                                <!-- Hidden input for securing actual POST request variable -->
+                                <input type="hidden" id="town" name="town" value="<?php echo htmlspecialchars($old['town'] ?? '', ENT_QUOTES, 'UTF-8'); ?>">
+                                
+                                <!-- Floating Dropdown Selection Menu -->
+                                <ul class="dropdown-menu w-100 shadow-sm overflow-auto" id="town-list" style="max-height: 250px; display: none; position: absolute; z-index: 1000; margin-top: 2px;">
+                                    <?php foreach ($boholTowns as $town): ?>
+                                        <li>
+                                            <button type="button" class="dropdown-item py-2 small" data-value="<?php echo htmlspecialchars($town, ENT_QUOTES, 'UTF-8'); ?>">
+                                                <?php echo htmlspecialchars($town, ENT_QUOTES, 'UTF-8'); ?>
+                                            </button>
+                                        </li>
+                                    <?php endforeach; ?>
+                                    <li id="no-results" style="display: none;">
+                                        <span class="dropdown-item text-muted small py-2">No matching towns found</span>
+                                    </li>
+                                </ul>
                             </div>
 
                             <!-- Contact Number -->
@@ -108,13 +174,37 @@ unset($_SESSION['error'], $_SESSION['old_input']);
                                           placeholder="e.g. No smoking, Curfew at 10 PM, Visitors allowed until 8 PM only"><?php echo htmlspecialchars($old['house_rules'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
                             </div>
 
+                            <!-- Verification & Media Header -->
+                            <div class="col-12 mt-4">
+                                <h6 class="fw-bold text-uppercase tracking-wider text-muted mb-1" style="font-size: 0.8rem;">Media & Legal Verification</h6>
+                                <hr class="my-2 border-light-subtle">
+                            </div>
+
+                            <!-- Featured Property Image Upload -->
+                            <div class="col-12">
+                                <label for="image_path" class="form-label">Featured Property Image <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="image_path" name="image_path" accept="image/png, image/jpeg, image/jpg, image/webp" required>
+                                <div class="form-text text-muted small" style="font-size: 0.75rem;">
+                                    Please upload a clear picture of your boarding house exterior or facade. Only JPG, JPEG, PNG, and WEBP formats are accepted.
+                                </div>
+                            </div>
+
+                            <!-- Verification Permit / Proof of Ownership Upload -->
+                            <div class="col-12">
+                                <label for="legality_proof" class="form-label">Proof of Ownership / Business Permit <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="legality_proof" name="legality_proof" accept="image/png, image/jpeg, image/jpg, image/webp, application/pdf" required>
+                                <div class="form-text text-muted small" style="font-size: 0.75rem;">
+                                    Upload a copy of your Business Permit, Barangay Clearance, or Land Title to verify legality. PDF and image formats are allowed.
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
                     <!-- Footer Submission Buttons -->
                     <div class="card-footer bg-transparent border-top border-light-subtle py-3 px-4 d-flex justify-content-end gap-2">
-                        <a href="<?php echo BASE_URL; ?>/owner/dashboard" class="btn pt-2">Cancel</a>
-                        <button type="submit" class="btn btn-dark btn-sm rounded-4">Submit</button>
+                        <a href="<?php echo BASE_URL; ?>/owner/dashboard" class="btn btn-light btn-sm px-3 pt-2 text-decoration-none">Cancel</a>
+                        <button type="submit" class="btn btn-dark btn-sm px-4">Submit</button>
                     </div>
                 </form>
 
@@ -122,6 +212,76 @@ unset($_SESSION['error'], $_SESSION['old_input']);
         </div>
     </div>
 </div>
+
+<!-- Searchable Town Selector UI Interaction Logic -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('town_search');
+    const hiddenInput = document.getElementById('town');
+    const dropdownMenu = document.getElementById('town-list');
+    const listItems = dropdownMenu.querySelectorAll('.dropdown-item:not(#no-results *)');
+    const noResultsItem = document.getElementById('no-results');
+
+    // Show dropdown when focused
+    searchInput.addEventListener('focus', function() {
+        dropdownMenu.style.display = 'block';
+        filterTowns();
+    });
+
+    // Handle character entries dynamically
+    searchInput.addEventListener('input', function() {
+        dropdownMenu.style.display = 'block';
+        filterTowns();
+        // Clear hidden output if the typed search does not match any valid selection
+        hiddenInput.value = '';
+    });
+
+    // Simple search filtering utility
+    function filterTowns() {
+        const query = searchInput.value.toLowerCase().trim();
+        let matchFound = false;
+
+        listItems.forEach(item => {
+            const cityName = item.textContent.toLowerCase();
+            if (cityName.includes(query)) {
+                item.closest('li').style.display = 'block';
+                matchFound = true;
+            } else {
+                item.closest('li').style.display = 'none';
+            }
+        });
+
+        // Toggle "No Matching Towns" notification helper
+        noResultsItem.style.display = matchFound ? 'none' : 'block';
+    }
+
+    // Set form parameters on click
+    dropdownMenu.addEventListener('click', function(e) {
+        const clickedBtn = e.target.closest('.dropdown-item');
+        if (clickedBtn && clickedBtn.id !== 'no-results') {
+            const selectedVal = clickedBtn.getAttribute('data-value');
+            searchInput.value = selectedVal;
+            hiddenInput.value = selectedVal;
+            dropdownMenu.style.display = 'none';
+        }
+    });
+
+    // Close the dropdown cleanly when clicking outside the input container
+    document.addEventListener('click', function(e) {
+        const container = document.getElementById('town-dropdown-container');
+        if (!container.contains(e.target)) {
+            dropdownMenu.style.display = 'none';
+            
+            // Revert search box text to active value if user clicked away without completing selection
+            if (hiddenInput.value) {
+                searchInput.value = hiddenInput.value;
+            } else {
+                searchInput.value = '';
+            }
+        }
+    });
+});
+</script>
 
 <?php
 // Include the standard footer template

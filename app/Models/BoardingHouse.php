@@ -59,8 +59,8 @@ class BoardingHouse {
      * Inserts a new boarding house listing into the database.
      */
     public function create(array $data): bool {
-        $sql = "INSERT INTO boarding_houses (owner_id, name, description, address, town, contact_number, amenities, house_rules, status) 
-                VALUES (:owner_id, :name, :description, :address, :town, :contact_number, :amenities, :house_rules, 'Pending')";
+        $sql = "INSERT INTO boarding_houses (owner_id, name, description, address, town, contact_number, amenities, house_rules, image_path, legality_proof, status) 
+                VALUES (:owner_id, :name, :description, :address, :town, :contact_number, :amenities, :house_rules, :image_path, :legality_proof, 'Pending')";
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
@@ -71,7 +71,9 @@ class BoardingHouse {
             ':town'           => $data['town'],
             ':contact_number' => $data['contact_number'],
             ':amenities'      => $data['amenities'] ?? null,
-            ':house_rules'    => $data['house_rules'] ?? null
+            ':house_rules'    => $data['house_rules'] ?? null,
+            ':image_path'     => $data['image_path'] ?? null,
+            ':legality_proof' => $data['legality_proof'] ?? null
         ]);
     }
 }

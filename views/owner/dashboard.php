@@ -1,4 +1,9 @@
 <?php
+/**
+ * File Location: views/owner/dashboard.php
+ * File Name: dashboard.php
+ * Description: Clean, professional, and modern card-based Owner Dashboard with integrated property image previews.
+ */
 
 // Include the standard clean header template
 require_once dirname(__DIR__) . '/templates/header.php';
@@ -9,10 +14,29 @@ require_once dirname(__DIR__) . '/templates/header.php';
     .property-card {
         transition: transform 0.25s ease, box-shadow 0.25s ease;
         border: 1px solid #eaeaea !important;
+        background-color: #ffffff;
+    }
+    .property-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.04) !important;
+        border-color: #948e8e !important;
     }
     .property-meta-icon {
         width: 24px;
         color: #6c757d;
+    }
+    /* Fixed Aspect Ratio Image Area */
+    .property-card-image-wrapper {
+        position: relative;
+        height: 180px;
+        background-color: #fafafa;
+        overflow: hidden;
+        border-bottom: 1px solid #eaeaea;
+    }
+    .property-card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
     }
 </style>
 
@@ -139,30 +163,44 @@ require_once dirname(__DIR__) . '/templates/header.php';
         <div class="row g-4 mb-5">
             <?php foreach ($properties as $house): ?>
                 <div class="col-lg-4 col-md-6 col-12">
-                    <div class="card property-card h-100 shadow-sm rounded-4 bg-white d-flex flex-column">
+                    <div class="card property-card h-100 shadow-sm rounded-4 bg-white d-flex flex-column overflow-hidden">
                         
-                        <!-- Card Header details -->
-                        <div class="card-body p-4 flex-grow-1">
-                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                <h5 class="fw-bold text-dark mb-0 text-truncate pe-2" style="max-width: 75%;" title="<?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>">
-                                    <?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>
-                                </h5>
-                                
-                                <!-- Status Badge alignment -->
+                        <!-- Visual Image Wrapper featuring uploads -->
+                        <div class="property-card-image-wrapper">
+                            <?php if (!empty($house['image_path'])): ?>
+                                <img src="<?php echo BASE_URL . '/public/' . htmlspecialchars($house['image_path'], ENT_QUOTES, 'UTF-8'); ?>" 
+                                     class="property-card-image" 
+                                     alt="<?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>">
+                            <?php else: ?>
+                                <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center text-muted">
+                                    <i class="fa-solid fa-house-chimney fa-2x mb-2 opacity-50"></i>
+                                    <span class="small opacity-75">No Image Provided</span>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <!-- Floating Status Badge inside Image frame -->
+                            <div class="position-absolute top-0 end-0 m-3">
                                 <?php if ($house['status'] === 'Approved'): ?>
-                                    <span class="badge rounded-1 bg-success-subtle text-success border border-success-subtle py-1 px-2 small">
+                                    <span class="badge bg-white text-success border border-success-subtle py-1.5 px-3 rounded-pill shadow-sm small font-monospace">
                                         Approved
                                     </span>
                                 <?php elseif ($house['status'] === 'Pending'): ?>
-                                    <span class="badge rounded-1 bg-secondary-subtle text-secondary border border-secondary-subtle py-1 px-2 small">
+                                    <span class="badge bg-white text-secondary border border-secondary-subtle py-1.5 px-3 rounded-pill shadow-sm small font-monospace">
                                         Pending
                                     </span>
                                 <?php else: ?>
-                                    <span class="badge rounded-1 bg-danger-subtle text-danger border border-danger-subtle py-1 px-2 small">
+                                    <span class="badge bg-white text-danger border border-danger-subtle py-1.5 px-3 rounded-pill shadow-sm small font-monospace">
                                         Rejected
                                     </span>
                                 <?php endif; ?>
                             </div>
+                        </div>
+
+                        <!-- Card Body Details -->
+                        <div class="card-body p-4 flex-grow-1">
+                            <h5 class="fw-bold text-dark mb-2 text-truncate" title="<?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>">
+                                <?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>
+                            </h5>
 
                             <!-- Property Short Description -->
                             <p class="text-muted small mb-4 text-truncate-2" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 38px;">
@@ -175,7 +213,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
                                     <span class="property-meta-icon"><i class="fa-solid fa-location-dot"></i></span>
                                     <span class="text-dark fw-medium text-truncate">
                                         <?php echo htmlspecialchars($house['town'], ENT_QUOTES, 'UTF-8'); ?> 
-                                        <span class="text-muted fw-normal d-block small mt-0.5"><?php echo htmlspecialchars($house['address'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                        <span class="text-muted fw-normal d-block small mt-0.5 text-truncate"><?php echo htmlspecialchars($house['address'], ENT_QUOTES, 'UTF-8'); ?></span>
                                     </span>
                                 </div>
                                 <div class="d-flex align-items-center small text-muted">

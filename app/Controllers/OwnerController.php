@@ -56,7 +56,7 @@ class OwnerController {
     }
 
     /**
-     * Register/Create a new Boarding House.
+     * Register/Create a new Boarding House with binary file streams.
      * Maps to POST /owner/add-house
      */
     public function addHouse(): void {
@@ -66,11 +66,12 @@ class OwnerController {
         $csrfToken = $_POST['csrf_token'] ?? '';
         if (!Security::validateCsrfToken($csrfToken)) {
             $_SESSION['error'] = "Invalid CSRF verification token. Please try again.";
+            $_SESSION['old_input'] = $_POST;
             header("Location: " . BASE_URL . "/owner/add-house");
             exit();
         }
 
-        // Sanitize overall inputs
+        // Sanitize overall inputs (except file pointers)
         $cleanData = Security::sanitize($_POST);
 
         $name = $cleanData['name'] ?? '';
@@ -87,6 +88,18 @@ class OwnerController {
         }
 
         try {
+            // 1. Process Property Image Upload
+            if (!isset($_FILES['image_path']) || $_FILES['image_path']['error'] === UPLOAD_ERR_NO_FILE) {
+                throw new Exception("A featured property facade image is required.");
+            }
+            $uploadedImagePath = $this->processUpload($_FILES['image_path'], ['jpg', 'jpeg', 'png', 'webp'], 'img_');
+
+            // 2. Process Legality Verification Document Upload
+            if (!isset($_FILES['legality_proof']) || $_FILES['legality_proof']['error'] === UPLOAD_ERR_NO_FILE) {
+                throw new Exception("An ownership permit or document is required for verification.");
+            }
+            $uploadedLegalityPath = $this->processUpload($_FILES['legality_proof'], ['jpg', 'jpeg', 'png', 'webp', 'pdf'], 'legal_');
+
             $insertData = [
                 'owner_id'       => (int)$_SESSION['user_id'],
                 'name'           => $name,
@@ -95,7 +108,9 @@ class OwnerController {
                 'town'           => $town,
                 'contact_number' => $contact,
                 'amenities'      => $cleanData['amenities'] ?? '',
-                'house_rules'    => $cleanData['house_rules'] ?? ''
+                'house_rules'    => $cleanData['house_rules'] ?? '',
+                'image_path'     => $uploadedImagePath,
+                'legality_proof' => $uploadedLegalityPath
             ];
 
             if ($this->houseModel->create($insertData)) {
@@ -112,5 +127,46 @@ class OwnerController {
             header("Location: " . BASE_URL . "/owner/add-house");
             exit();
         }
+    }
+
+    /**
+     * Helper routine to securely manage incoming binary file uploads.
+     * Returns the web-accessible relative path to store in database.
+     */
+    private function processUpload(array $file, array $allowedExtensions, string $prefix): string {
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new Exception("File upload failed with error code: " . $file['error']);
+        }
+
+        // Limit individual file size to 5MB max
+        if ($file['size'] > 5 * 1024 * 1024) {
+            throw new Exception("The uploaded file exceeds the maximum 5MB size limit.");
+        }
+
+        $origName = $file['name'];
+        $extension = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+
+        if (!in_array($extension, $allowedExtensions)) {
+            throw new Exception("Invalid file format. Allowed extensions: " . implode(', ', $allowedExtensions));
+        }
+
+        // Establish destination directory safely
+        $targetDir = dirname(__DIR__, 2) . '/public/uploads/';
+        if (!is_dir($targetDir)) {
+            if (!mkdir($targetDir, 0755, true)) {
+                throw new Exception("Server folder creation failed. Please check file write permissions.");
+            }
+        }
+
+        // Generate a completely unique, safe hashed filename
+        $safeFileName = $prefix . bin2hex(random_bytes(8)) . '_' . time() . '.' . $extension;
+        $destinationPath = $targetDir . $safeFileName;
+
+        if (!move_uploaded_file($file['tmp_name'], $destinationPath)) {
+            throw new Exception("Failed to save the uploaded file on the server.");
+        }
+
+        // Return relative path for web rendering: "uploads/safe_filename.ext"
+        return 'uploads/' . $safeFileName;
     }
 }
