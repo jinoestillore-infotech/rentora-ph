@@ -38,6 +38,7 @@ use App\Controllers\AuthController;
 use App\Controllers\OwnerController;
 use App\Controllers\AdminController;
 use App\Controllers\AdminRejectedController;
+use App\Controllers\OwnerRejectedController;
 
 Security::startSecureSession();
 
@@ -59,6 +60,8 @@ $router->get('/logout', [AuthController::class, 'handleLogout']);
 $router->get('/owner/dashboard', [OwnerController::class, 'dashboard']);
 $router->get('/owner/add-house', [OwnerController::class, 'showAddHouseForm']);
 $router->post('/owner/add-house', [OwnerController::class, 'addHouse']);
+// New Owner Rejected Property Management Handler
+$router->get('/owner/rejected-houses', [OwnerRejectedController::class, 'rejectedList']);
 
 // Admin Route Handlers
 $router->get('/admin/dashboard', [AdminController::class, 'dashboard']);

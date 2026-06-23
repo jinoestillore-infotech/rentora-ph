@@ -53,6 +53,35 @@ require_once dirname(__DIR__) . '/templates/header.php';
         </a>
     </div>
 
+    <!-- Dynamic Rejection Action Required Alert Notification -->
+    <?php 
+    // Fall back to inline counting if $rejectedCount is not explicitly passed from the controller
+    $rejectedCount = $rejectedCount ?? count(array_filter($properties ?? [], function($house) {
+        return $house['status'] === 'Rejected';
+    }));
+    if ($rejectedCount > 0): 
+    ?>
+        <div class="col-12 mt-3 mb-5">
+            <div class="card bg-danger-subtle border-0 rounded-3 shadow-sm">
+                <div class="card-body p-3 p-sm-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="text-warning fs-3 mt-1">
+                            <i class="fa-solid fa-circle-exclamation text-danger"></i>
+                        </div>
+                        <div>
+                            <span class="text-uppercase text-danger fw-bold d-block small" style="letter-spacing: 0.05em; font-size: 0.75rem;">Action Required</span>
+                            <h4 class="h6 fw-semibold text-dark mb-0 mt-1">You have <?php echo $rejectedCount; ?> rejected boarding house registration<?php echo $rejectedCount > 1 ? 's' : ''; ?>.</h4>
+                            <p class="text-muted small mb-0 mt-1">Rejected files must be reviewed immediately. Uncorrected listings are automatically deleted from server storage 3 days after rejection.</p>
+                        </div>
+                    </div>
+                    <a href="<?php echo BASE_URL; ?>/owner/rejected-houses" class="btn btn-danger rounded-2 fw-bold py-2 px-4 shadow-sm text-nowrap align-self-stretch align-self-md-center text-light">
+                        View Logs <i class="fa-solid fa-chevron-right ms-1 small"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
     <!-- Alert Notifications -->
     <?php if (isset($success)): ?>
         <div class="alert alert-success d-flex align-items-center alert-dismissible fade show p-3 border-0 rounded-1 mb-4" style="background-color: #f0fff4; color: #22543d;" role="alert">

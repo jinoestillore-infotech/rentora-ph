@@ -36,8 +36,18 @@ class OwnerController {
         
         // Fetch properties and analytics
         $stats = $this->houseModel->getStatsByOwnerId($ownerId);
-        $properties = $this->houseModel->getByOwnerId($ownerId);
+        $allProperties = $this->houseModel->getByOwnerId($ownerId);
 
+        // Filter properties array to show ONLY Approved and Pending properties in the dashboard cards
+        $properties = array_filter($allProperties, function($house) {
+            return in_array($house['status'], ['Approved', 'Pending']);
+        });
+
+        // Calculate rejected count separately from the full list to trigger the warning banner
+        $rejectedCount = count(array_filter($allProperties, function($house) {
+            return $house['status'] === 'Rejected';
+        }));
+        
         // Flash message handling
         $success = $_SESSION['success'] ?? null;
         $error = $_SESSION['error'] ?? null;
