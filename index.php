@@ -36,6 +36,7 @@ use App\Core\Router;
 use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Controllers\OwnerController;
+use App\Controllers\AdminController;
 
 Security::startSecureSession();
 
@@ -57,6 +58,11 @@ $router->get('/logout', [AuthController::class, 'handleLogout']);
 $router->get('/owner/dashboard', [OwnerController::class, 'dashboard']);
 $router->get('/owner/add-house', [OwnerController::class, 'showAddHouseForm']);
 $router->post('/owner/add-house', [OwnerController::class, 'addHouse']);
+
+// Admin Route Handlers
+$router->get('/admin/dashboard', [AdminController::class, 'dashboard']);
+$router->get('/admin/verify-house', [AdminController::class, 'showVerifyForm']);
+$router->post('/admin/verify-house', [AdminController::class, 'handleVerify']);
 
 // Fire router engine to resolve the request path
 $router->resolve();

@@ -141,7 +141,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
     <!-- Boarding Houses Grid Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h5 class="fw-bold text-dark mb-0">
-            <i class="fa-solid fa-house-chimney me-2"></i>My Registered Properties
+            Registered Properties
         </h5>
         <span class="badge bg-white text-dark border border-light-subtle py-2 px-3 rounded-1 small fw-semibold shadow-sm">
             <?php echo count($properties); ?> Properties
