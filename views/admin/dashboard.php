@@ -123,7 +123,7 @@ $pendingProperties = $pendingProperties ?? [];
                 </div>
             </div>
             
-            <div class="row g-3">
+            <div class="row g-2">
                 <div class="col-md-6 col-12">
                     <a href="<?php echo BASE_URL; ?>/admin/approved-houses" class="card text-decoration-none border border-light-subtle rounded-1 p-3 bg-light-subtle hover-card transition-all h-100" style="transition: all 0.2s ease-in-out;">
                         <div class="d-flex align-items-center">
@@ -138,6 +138,19 @@ $pendingProperties = $pendingProperties ?? [];
                     </a>
                 </div>
                 <div class="col-md-6 col-12">
+                    <a href="<?php echo BASE_URL; ?>/admin/rejected-houses" class="card text-decoration-none border border-light-subtle rounded-1 p-3 bg-light-subtle hover-card transition-all h-100" style="transition: all 0.2s ease-in-out;">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-white border rounded-1 p-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
+                                <i class="fa-solid fa-building-circle-xmark text-dark fs-4"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-dark mb-1">Rejected Submissions Listings Registry</h6>
+                                <p class="text-muted small mb-0">View profiles and logged rejection reasons.</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-md-4 col-12">
                     <div class="card border border-light-subtle rounded-1 p-3 bg-light-subtle h-100 opacity-75">
                         <div class="d-flex align-items-center">
                             <div class="bg-white border rounded-1 p-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">

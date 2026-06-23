@@ -37,6 +37,7 @@ use App\Controllers\UserController;
 use App\Controllers\AuthController;
 use App\Controllers\OwnerController;
 use App\Controllers\AdminController;
+use App\Controllers\AdminRejectedController;
 
 Security::startSecureSession();
 
@@ -67,6 +68,11 @@ $router->post('/admin/verify-house', [AdminController::class, 'handleVerify']);
 $router->get('/admin/approved-houses', [AdminController::class, 'approvedList']);
 $router->get('/admin/approved-house/view/{houseId}', [AdminController::class, 'showApprovedDetail']);
 $router->post('/admin/approved-house/delete', [AdminController::class, 'handleDelete']);
+// New Rejected Property Management Handlers
+$router->get('/admin/rejected-houses', [AdminRejectedController::class, 'rejectedList']);
+$router->get('/admin/rejected-house/view/{houseId}', [AdminRejectedController::class, 'showRejectedDetail']);
+$router->post('/admin/rejected-house/reason', [AdminRejectedController::class, 'updateReason']);
+$router->post('/admin/rejected-house/delete', [AdminRejectedController::class, 'handleDelete']);
 
 
 // Fire router engine to resolve the request path

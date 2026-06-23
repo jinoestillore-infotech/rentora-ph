@@ -1,8 +1,8 @@
 <?php
 /**
- * File Location: views/admin/approved_houses.php
- * File Name: approved_houses.php
- * Description: Clean, minimal layout to manage and list active, approved boarding houses.
+ * File Location: views/admin/rejected_houses.php
+ * File Name: rejected_houses.php
+ * Description: Grayscale listing layout displaying all rejected applications with searchable reasons.
  */
 
 require_once dirname(__DIR__) . '/templates/header.php';
@@ -11,22 +11,23 @@ $properties = $properties ?? [];
 
 <div class="container my-5 mt-4">
     
-    <!-- Navigation back & Page Header -->
+    <!-- Top Nav Links -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <a href="<?php echo BASE_URL; ?>/admin/dashboard" class="text-decoration-none text-dark small fw-semibold">
             <i class="fa-solid fa-arrow-left me-2"></i>Dashboard Console
         </a>
-        <span class="badge bg-light text-dark border py-1.5 px-3 rounded-1 small font-monospace">
-            Active Registry
+        <span class="badge bg-light text-danger border border-danger-subtle py-1.5 px-3 rounded-1 small font-monospace">
+            Rejected Applications Logs
         </span>
     </div>
 
+    <!-- Header Frame -->
     <div class="border-bottom border-light-subtle pb-4 mb-5">
-        <h1 class="h2 fw-bold text-dark mb-1">Approved Boarding Houses</h1>
-        <p class="text-muted mb-0 small">Verify listed structural amenities, review legal files, or terminate approved assets.</p>
+        <h1 class="h2 fw-bold text-dark mb-1">Rejected Boarding Houses</h1>
+        <p class="text-muted mb-0 small">Review rejection logs, write/update structural failure descriptions, or permanently delete directories.</p>
     </div>
 
-    <!-- Feedback Alerts -->
+    <!-- Alerts -->
     <?php if ($success): ?>
         <div class="alert alert-success d-flex align-items-center alert-dismissible fade show p-3 border-0 rounded-1 mb-4" style="background-color: #f0fff4; color: #22543d;" role="alert">
             <i class="fa-solid fa-circle-check me-3"></i>
@@ -47,30 +48,30 @@ $properties = $properties ?? [];
     <div class="card shadow-sm border border-light-subtle rounded-1 bg-white mb-4">
         <div class="card-body p-3">
             <div class="input-group">
-                <input type="text" id="property-search" class="form-control" placeholder="Type to search property name, owner or town location...">
+                <input type="text" id="property-search" class="form-control" placeholder="Search by name, owner, municipality, or rejection reason keyword...">
             </div>
         </div>
     </div>
 
-    <!-- Approved Properties Registry -->
+    <!-- Registry Card -->
     <div class="card shadow-sm border border-light-subtle rounded-1 bg-white">
         <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
             <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
                 <thead class="table-light text-secondary" style="position: sticky; top: 0; z-index: 10; background-color: #f8f9fa; box-shadow: inset 0 -1px 0 rgba(0,0,0,.1);">
                     <tr>
                         <th class="py-3 px-4 border-0">Property Name</th>
-                        <th class="py-3 border-0">Town / Address</th>
                         <th class="py-3 border-0">Owner Partner</th>
-                        <th class="py-3 border-0 text-center">Rooms</th>
+                        <th class="py-3 border-0">Town / Address</th>
+                        <th class="py-3 border-0">Rejection Reason logged</th>
                         <th class="py-3 px-4 border-0 text-end">Action</th>
                     </tr>
                 </thead>
-                <tbody id="approved-tbody">
+                <tbody id="rejected-tbody">
                     <?php if (empty($properties)): ?>
                         <tr>
                             <td colspan="5" class="text-center py-5 text-muted">
-                                <i class="fa-solid fa-building-circle-exclamation fa-2x d-block mb-3 opacity-50"></i>
-                                <span class="small">No approved properties registered in the platform yet.</span>
+                                <i class="fa-solid fa-folder-open fa-2x d-block mb-3 opacity-50"></i>
+                                <span class="small">No rejected properties found in database registry.</span>
                             </td>
                         </tr>
                     <?php else: ?>
@@ -81,22 +82,26 @@ $properties = $properties ?? [];
                                     <span class="text-muted small" style="font-size: 0.75rem;"><?php echo htmlspecialchars($house['contact_number'], ENT_QUOTES, 'UTF-8'); ?></span>
                                 </td>
                                 <td>
-                                    <div class="text-dark search-target"><?php echo htmlspecialchars($house['town'], ENT_QUOTES, 'UTF-8'); ?></div>
-                                    <span class="text-muted small text-truncate d-block search-target" style="max-width: 220px;" title="<?php echo htmlspecialchars($house['address'], ENT_QUOTES, 'UTF-8'); ?>">
-                                        <?php echo htmlspecialchars($house['address'], ENT_QUOTES, 'UTF-8'); ?>
-                                    </span>
-                                </td>
-                                <td>
                                     <div class="text-dark fw-medium search-target"><?php echo htmlspecialchars($house['firstname'] . ' ' . $house['lastname'], ENT_QUOTES, 'UTF-8'); ?></div>
                                     <span class="text-muted small d-block search-target"><?php echo htmlspecialchars($house['owner_email'], ENT_QUOTES, 'UTF-8'); ?></span>
                                 </td>
-                                <td class="text-center">
-                                    <span class="badge bg-light text-dark border font-monospace px-3 py-1.5 rounded-pill">
-                                        <?php echo (int)$house['total_rooms']; ?> Rooms
+                                <td>
+                                    <div class="text-dark search-target"><?php echo htmlspecialchars($house['town'], ENT_QUOTES, 'UTF-8'); ?></div>
+                                    <span class="text-muted small text-truncate d-block search-target" style="max-width: 200px;" title="<?php echo htmlspecialchars($house['address'], ENT_QUOTES, 'UTF-8'); ?>">
+                                        <?php echo htmlspecialchars($house['address'], ENT_QUOTES, 'UTF-8'); ?>
                                     </span>
                                 </td>
+                                <td class="search-target">
+                                    <?php if (!empty($house['rejection_reason'])): ?>
+                                        <span class="text-danger small fw-semibold text-truncate d-block" style="max-width: 280px;" title="<?php echo htmlspecialchars($house['rejection_reason'], ENT_QUOTES, 'UTF-8'); ?>">
+                                            <i class="fa-solid fa-circle-exclamation me-1"></i><?php echo htmlspecialchars($house['rejection_reason'], ENT_QUOTES, 'UTF-8'); ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-muted small italic">No reason explanation logged.</span>
+                                    <?php endif; ?>
+                                </td>
                                 <td class="py-3 px-4 text-end">
-                                    <a href="<?php echo BASE_URL; ?>/admin/approved-house/view/<?php echo (int)$house['id']; ?>" class="btn btn-dark btn-sm py-2 px-3">
+                                    <a href="<?php echo BASE_URL; ?>/admin/rejected-house/view/<?php echo (int)$house['id']; ?>" class="btn btn btn-dark btn-sm py-2 px-3">
                                         <i class="fa-solid fa-eye me-1"></i> View Details
                                     </a>
                                 </td>
@@ -107,7 +112,7 @@ $properties = $properties ?? [];
             </table>
         </div>
 
-        <!-- Pagination controller segment -->
+        <!-- Pagination Controller segment -->
         <div class="card-footer bg-white py-3 border-top border-light-subtle d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
             <div class="text-muted small" id="pagination-info">
                 Showing <span id="start-idx" class="fw-semibold">0</span> to <span id="end-idx" class="fw-semibold">0</span> of <span id="total-idx" class="fw-semibold">0</span> entries
@@ -119,10 +124,11 @@ $properties = $properties ?? [];
     </div>
 </div>
 
+<!-- Search & Pagination Logic -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const rowsPerPage = 5;
-    const tbody = document.getElementById('approved-tbody');
+    const tbody = document.getElementById('rejected-tbody');
     const searchInput = document.getElementById('property-search');
     if (!tbody) return;
 
@@ -133,17 +139,23 @@ document.addEventListener('DOMContentLoaded', function() {
     function applyPagination() {
         const totalRows = filteredRows.length;
         if (totalRows === 0) {
-            document.getElementById('pagination-info').parentElement.style.setProperty('display', 'none', 'important');
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-magnifying-glass-minus fa-2x mb-3 d-block opacity-50"></i>No properties match your filter keywords.</td></tr>`;
+            const infoContainer = document.getElementById('pagination-info');
+            if (infoContainer && infoContainer.parentElement) {
+                infoContainer.parentElement.style.setProperty('display', 'none', 'important');
+            }
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted"><i class="fa-solid fa-magnifying-glass-minus fa-2x mb-3 d-block opacity-50"></i>No rejected properties match your keywords.</td></tr>`;
             return;
         }
 
-        document.getElementById('pagination-info').parentElement.style.removeProperty('display');
+        const infoContainer = document.getElementById('pagination-info');
+        if (infoContainer && infoContainer.parentElement) {
+            infoContainer.parentElement.style.removeProperty('display');
+        }
+
         const totalPages = Math.ceil(totalRows / rowsPerPage);
         const start = (currentPage - 1) * rowsPerPage;
         const end = start + rowsPerPage;
 
-        // Repopulate standard body
         tbody.innerHTML = '';
         filteredRows.slice(start, end).forEach(row => tbody.appendChild(row));
 
@@ -159,14 +171,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!container) return;
         container.innerHTML = '';
 
-        // Previous
+        // Previous link
         const prevLi = document.createElement('li');
         prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
         prevLi.innerHTML = `<button class="page-link text-dark" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
         prevLi.addEventListener('click', () => { if (currentPage > 1) { currentPage--; applyPagination(); } });
         container.appendChild(prevLi);
 
-        // Numerics
+        // Numerics links
         for (let i = 1; i <= totalPages; i++) {
             const li = document.createElement('li');
             li.className = `page-item ${currentPage === i ? 'active' : ''}`;
@@ -176,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function() {
             container.appendChild(li);
         }
 
-        // Next
+        // Next link
         const nextLi = document.createElement('li');
         nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
         nextLi.innerHTML = `<button class="page-link text-dark" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
@@ -184,7 +196,6 @@ document.addEventListener('DOMContentLoaded', function() {
         container.appendChild(nextLi);
     }
 
-    // Instant Filter handler
     searchInput.addEventListener('input', function() {
         const query = searchInput.value.toLowerCase().trim();
         filteredRows = rows.filter(row => {
