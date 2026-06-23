@@ -150,18 +150,18 @@ $pendingProperties = $pendingProperties ?? [];
                         </div>
                     </a>
                 </div>
-                <div class="col-md-4 col-12">
-                    <div class="card border border-light-subtle rounded-1 p-3 bg-light-subtle h-100 opacity-75">
+                <div class="col-md-6 col-12">
+                    <a href="<?php echo BASE_URL; ?>/admin/users" class="card text-decoration-none border border-light-subtle rounded-1 p-3 bg-light-subtle hover-card transition-all h-100" style="transition: all 0.2s ease-in-out;">
                         <div class="d-flex align-items-center">
                             <div class="bg-white border rounded-1 p-3 me-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 50px; height: 50px;">
-                                <i class="fa-solid fa-users-gear text-secondary fs-4"></i>
+                                <i class="fa-solid fa-users-gear text-dark fs-4"></i>
                             </div>
                             <div>
-                                <h6 class="fw-bold text-secondary mb-1">User & Owner Accounts (Locked)</h6>
+                                <h6 class="fw-bold text-dark mb-1">User & Owner Accounts</h6>
                                 <p class="text-muted small mb-0">Monitor platform partner accounts, review registration limits, or suspend users.</p>
                             </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             </div>
         </div>

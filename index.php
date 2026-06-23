@@ -39,6 +39,7 @@ use App\Controllers\OwnerController;
 use App\Controllers\AdminController;
 use App\Controllers\AdminRejectedController;
 use App\Controllers\OwnerRejectedController;
+use App\Controllers\AdminUserController;
 
 Security::startSecureSession();
 
@@ -76,6 +77,9 @@ $router->get('/admin/rejected-houses', [AdminRejectedController::class, 'rejecte
 $router->get('/admin/rejected-house/view/{houseId}', [AdminRejectedController::class, 'showRejectedDetail']);
 $router->post('/admin/rejected-house/reason', [AdminRejectedController::class, 'updateReason']);
 $router->post('/admin/rejected-house/delete', [AdminRejectedController::class, 'handleDelete']);
+// New Admin User & Owner Account Management Handlers
+$router->get('/admin/users', [AdminUserController::class, 'index']);
+$router->post('/admin/user/toggle-status', [AdminUserController::class, 'toggleStatus']);
 
 
 // Fire router engine to resolve the request path

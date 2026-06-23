@@ -262,7 +262,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
                         <!-- Card Footer actions -->
                         <div class="bg-transparent border-top border-light-subtle p-3 mt-auto d-grid">
                             <?php if ($house['status'] === 'Approved'): ?>
-                                <a href="<?php echo BASE_URL; ?>/owner/rooms?house_id=<?php echo (int)$house['id']; ?>" class="btn btn-dark btn-sm py-2 rounded-3">
+                                <a href="" class="btn btn-dark btn-sm py-2 rounded-3">
                                     <i class="fa-solid fa-door-open me-2"></i>Manage Rooms
                                 </a>
                             <?php else: ?>
