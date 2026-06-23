@@ -42,6 +42,7 @@ use App\Controllers\OwnerRejectedController;
 use App\Controllers\AdminUserController;
 use App\Controllers\RoomController;
 use App\Controllers\TenantController;
+use App\Controllers\TenantApplicationController;
 
 Security::startSecureSession();
 
@@ -73,7 +74,6 @@ $router->get('/owner/room/edit/{houseId}/{roomId}', [RoomController::class, 'sho
 $router->post('/owner/room/edit', [RoomController::class, 'editRoom']);
 $router->post('/owner/room/delete', [RoomController::class, 'deleteRoom']);
 
-
 // Admin Route Handlers
 $router->get('/admin/dashboard', [AdminController::class, 'dashboard']);
 $router->get('/admin/verify-house/{houseId}', [AdminController::class, 'showVerifyForm']);
@@ -95,7 +95,10 @@ $router->post('/admin/user/toggle-status', [AdminUserController::class, 'toggleS
 $router->get('/tenant/dashboard', [TenantController::class, 'dashboard']);
 $router->get('/tenant/browse', [TenantController::class, 'index']);
 $router->get('/tenant/house/view/{houseId}', [TenantController::class, 'viewHouse']);
-
+$router->get('/tenant/house/inquire/{houseId}', [TenantController::class, 'inquire']);
+// New Tenant Apply Request Handlers
+$router->get('/tenant/house/apply/{houseId}', [TenantApplicationController::class, 'showApplyForm']);
+$router->post('/tenant/house/apply', [TenantApplicationController::class, 'handleApply']);
 
 // Fire router engine to resolve the request path
 $router->resolve();

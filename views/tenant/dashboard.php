@@ -69,6 +69,14 @@ $shortcutTowns = ['Tagbilaran City', 'Panglao', 'Tubigon', 'Ubay', 'Inabanga', '
     </div>
 
     <!-- Feedback Alerts -->
+    <?php if ($success): ?>
+        <div class="alert alert-success d-flex align-items-center alert-dismissible fade show p-3 border-0 rounded-1 mb-4" style="background-color: #f0fff4; color: #22543d;" role="alert">
+            <i class="fa-solid fa-circle-check me-3"></i>
+            <span class="small"><?php echo htmlspecialchars($success, ENT_QUOTES, 'UTF-8'); ?></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php endif; ?>
+
     <?php if (isset($error)): ?>
         <div class="alert alert-danger d-flex align-items-center alert-dismissible fade show p-3 border-0 rounded-1 mb-5" style="background-color: #fff5f5; color: #c53030;" role="alert">
             <i class="fa-solid fa-circle-exclamation me-3"></i>

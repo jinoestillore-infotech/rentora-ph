@@ -26,9 +26,42 @@ require_once dirname(__DIR__) . '/templates/header.php';
         </p>
     </div>
 
+    <div class="row mb-3 pb-3 border-bottom border-white-subtle">
+        <div class="col-md-5 px-0 m-0">
+            <!-- Landlord contact parameters -->
+            <div class="card border-0 bg-transparent p-4">
+                <h6 class="fw-bold text-uppercase tracking-wider mb-3" style="font-size: 0.75rem;"><i class="fa-solid fa-user-tie me-2"></i>Direct Landlord Contact Details</h6>
+                <div class="row g-3">
+                    <div class="col-12">
+                        <span class="text-muted small d-block">Authorized Landlord</span>
+                        <span class="fw-semibold text-dark"><?php echo htmlspecialchars($house['owner_firstname'] . ' ' . $house['owner_lastname'], ENT_QUOTES, 'UTF-8'); ?></span>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted small d-block">Primary Contact Number</span>
+                        <span class="fw-semibold text-dark font-monospace"><?php echo htmlspecialchars($house['contact_number'], ENT_QUOTES, 'UTF-8'); ?></span>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted small d-block">Support Mail Profile</span>
+                        <span class="fw-semibold text-dark"><?php echo htmlspecialchars($house['owner_email'], ENT_QUOTES, 'UTF-8'); ?></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 bg-light d-flex align-items-center justify-content-center px-3 m-0" style="min-height: 180px;">
+            <?php if (!empty($house['image_path'])): ?>
+                <img src="<?php echo BASE_URL . '/public/' . htmlspecialchars($house['image_path'], ENT_QUOTES, 'UTF-8'); ?>" class="img-fluid h-100 w-100" style="object-fit: cover;" alt="Room Photo Layout">
+            <?php else: ?>
+                <div class="text-center text-muted p-3">
+                    <i class="fa-solid fa-bed fs-1 d-block mb-2 opacity-30"></i>
+                    <span class="small opacity-50" style="font-size: 0.7rem;">No Image Provided</span>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <div class="row g-4">
         <!-- COLUMN 1: Photo Previews and dynamic Room Offerings cards -->
-        <div class="col-lg-7 col-12">
+        <div class="col-lg-7 col-12 py-md-3">
 
             <!-- Rooms catalog table list -->
             <h5 class="fw-bold text-dark mb-3">Room Accommodations Catalog</h5>
@@ -121,69 +154,53 @@ require_once dirname(__DIR__) . '/templates/header.php';
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Landlord contact parameters -->
-                <div class="card border border-light-subtle rounded-3 bg-white shadow-sm p-4 mb-1">
-                    <h6 class="fw-bold text-uppercase tracking-wider mb-3" style="font-size: 0.75rem;"><i class="fa-solid fa-user-tie me-2"></i>Direct Landlord Contact Details</h6>
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <span class="text-muted small d-block">Authorized Landlord</span>
-                            <span class="fw-semibold text-dark"><?php echo htmlspecialchars($house['owner_firstname'] . ' ' . $house['owner_lastname'], ENT_QUOTES, 'UTF-8'); ?></span>
-                        </div>
-                        <div class="col-12">
-                            <span class="text-muted small d-block">Primary Contact Number</span>
-                            <span class="fw-semibold text-dark font-monospace"><?php echo htmlspecialchars($house['contact_number'], ENT_QUOTES, 'UTF-8'); ?></span>
-                        </div>
-                        <div class="col-12">
-                            <span class="text-muted small d-block">Support Mail Profile</span>
-                            <span class="fw-semibold text-dark"><?php echo htmlspecialchars($house['owner_email'], ENT_QUOTES, 'UTF-8'); ?></span>
-                        </div>
-                    </div>
-                </div>
             <?php endif; ?>
 
         </div>
 
         <!-- COLUMN 2: Details, Amenities, Rules and Landlord details -->
         <div class="col-lg-5 col-12">
-            <!-- Description panel -->
-            <h5 class="fw-bold text-dark mb-3">Accommodations Overview</h5>
-            <div class="card border border-light-subtle rounded-3 bg-white shadow-sm p-4 mb-3">
-                <p class="text-dark small leading-relaxed mb-0">
-                    <?php echo nl2br(htmlspecialchars($house['description'] ?: 'No primary overview coordinates provided for this boarding house.', ENT_QUOTES, 'UTF-8')); ?>
-                </p>
-            </div>
-
-            <!-- Rules & Amenities logs -->
-            <div class="card border border-light-subtle rounded-3 bg-white shadow-sm p-4">
-                <h6 class="fw-bold text-uppercase tracking-wider mb-3" style="font-size: 0.75rem;"><i class="fa-solid fa-list-check me-2"></i>Rules & Building Facilities</h6>
-                <div class="mb-4">
-                    <span class="text-muted fw-semibold small d-block mb-2">Building Amenities</span>
-                    <?php if (!empty($house['amenities'])): ?>
-                        <div class="d-flex flex-wrap gap-2">
-                            <?php foreach (explode(',', $house['amenities']) as $amenity): ?>
-                                <span class="badge bg-light text-dark border rounded-1 py-1 px-2 font-monospace" style="font-size: 0.7rem;">
-                                    <?php echo htmlspecialchars(trim($amenity), ENT_QUOTES, 'UTF-8'); ?>
-                                </span>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php else: ?>
-                        <span class="text-muted small italic">No standard building facilities defined.</span>
-                    <?php endif; ?>
-                </div>
-
-                <div class="border-top border-light-subtle pt-3">
-                    <span class="fw-semibold small d-block mb-1">Boarding House Rules</span>
+            <div class="sticky-md-top py-md-3">
+                <!-- Description panel -->
+                <h5 class="fw-bold text-dark mb-3">Accommodations Overview</h5>
+                <div class="card border border-light-subtle rounded-3 bg-white shadow-sm p-4 mb-3">
                     <p class="text-dark small leading-relaxed mb-0">
-                        <?php echo nl2br(htmlspecialchars($house['house_rules'] ?: 'No boarding restrictions compiled.', ENT_QUOTES, 'UTF-8')); ?>
+                        <?php echo nl2br(htmlspecialchars($house['description'] ?: 'No primary overview coordinates provided for this boarding house.', ENT_QUOTES, 'UTF-8')); ?>
                     </p>
                 </div>
-            </div>
-            
-            <!-- Buttons -->
-            <div class="d-flex justify-content-center d-block mt-4 gap-2">
-                <button class="btn btn-dark btn-lg w-100">Inquire</button>
-                <button class="btn btn-dark btn-lg w-100">Apply</button>
-            </div>           
+
+                <!-- Rules & Amenities logs -->
+                <div class="card border border-light-subtle rounded-3 bg-white shadow-sm p-4">
+                    <h6 class="fw-bold text-uppercase tracking-wider mb-3" style="font-size: 0.75rem;"><i class="fa-solid fa-list-check me-2"></i>Rules & Building Facilities</h6>
+                    <div class="mb-4">
+                        <span class="text-muted fw-semibold small d-block mb-2">Building Amenities</span>
+                        <?php if (!empty($house['amenities'])): ?>
+                            <div class="d-flex flex-wrap gap-2">
+                                <?php foreach (explode(',', $house['amenities']) as $amenity): ?>
+                                    <span class="badge bg-light text-dark border rounded-1 py-1 px-2 font-monospace" style="font-size: 0.7rem;">
+                                        <?php echo htmlspecialchars(trim($amenity), ENT_QUOTES, 'UTF-8'); ?>
+                                    </span>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <span class="text-muted small italic">No standard building facilities defined.</span>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="border-top border-light-subtle pt-3">
+                        <span class="fw-semibold small d-block mb-1">Boarding House Rules</span>
+                        <p class="text-dark small leading-relaxed mb-0">
+                            <?php echo nl2br(htmlspecialchars($house['house_rules'] ?: 'No boarding restrictions compiled.', ENT_QUOTES, 'UTF-8')); ?>
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Buttons -->
+                <div class="d-flex justify-content-center d-block mt-4 gap-2">
+                    <a href="<?php echo BASE_URL; ?>/tenant/house/inquire/<?php echo (int)$house['id']; ?>" class="btn btn-dark btn-lg w-100 text-decoration-none d-flex align-items-center justify-content-center">Inquire</a>
+                    <a href="<?php echo BASE_URL; ?>/tenant/house/apply/<?php echo (int)$house['id']; ?>" class="btn btn-dark btn-lg w-100 text-decoration-none d-flex align-items-center justify-content-center">Apply</a>
+                </div>  
+            </div>  
         </div>
 
     </div>

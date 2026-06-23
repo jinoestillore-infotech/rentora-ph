@@ -39,8 +39,11 @@ class TenantController {
 
         $stats = [];
         $recent = [];
+
+        // Flush active flash alerts
+        $success = $_SESSION['success'] ?? null;
         $error = $_SESSION['error'] ?? null;
-        unset($_SESSION['error']);
+        unset($_SESSION['success'], $_SESSION['error']);
 
         try {
             $dashboardData = $this->tenantService->getDashboardData();
@@ -87,6 +90,26 @@ class TenantController {
             $rooms = $profile['rooms'];
             
             require_once dirname(__DIR__, 2) . '/views/tenant/view_house.php';
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            header("Location: " . BASE_URL . "/tenant/dashboard");
+            exit();
+        }
+    }
+
+    /**
+     * Display contact details and direct inquiry instructions for landlords.
+     * Maps to GET /tenant/house/inquire/{houseId}
+     */
+    public function inquire(mixed $houseId = 0): void {
+        $this->checkTenantAccess();
+        $houseId = (int)$houseId;
+
+        try {
+            $profile = $this->tenantService->getPropertyProfile($houseId);
+            $house = $profile['house'];
+            
+            require_once dirname(__DIR__, 2) . '/views/tenant/inquire.php';
         } catch (Exception $e) {
             $_SESSION['error'] = $e->getMessage();
             header("Location: " . BASE_URL . "/tenant/dashboard");
