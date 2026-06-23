@@ -40,6 +40,7 @@ use App\Controllers\AdminController;
 use App\Controllers\AdminRejectedController;
 use App\Controllers\OwnerRejectedController;
 use App\Controllers\AdminUserController;
+use App\Controllers\RoomController;
 
 Security::startSecureSession();
 
@@ -63,6 +64,14 @@ $router->get('/owner/add-house', [OwnerController::class, 'showAddHouseForm']);
 $router->post('/owner/add-house', [OwnerController::class, 'addHouse']);
 // New Owner Rejected Property Management Handler
 $router->get('/owner/rejected-houses', [OwnerRejectedController::class, 'rejectedList']);
+// New Owner Rooms Management Handlers
+$router->get('/owner/rooms/{houseId}', [RoomController::class, 'index']);
+$router->get('/owner/room/add/{houseId}', [RoomController::class, 'showAddForm']);
+$router->post('/owner/room/add', [RoomController::class, 'addRoom']);
+$router->get('/owner/room/edit/{houseId}/{roomId}', [RoomController::class, 'showEditForm']);
+$router->post('/owner/room/edit', [RoomController::class, 'editRoom']);
+$router->post('/owner/room/delete', [RoomController::class, 'deleteRoom']);
+
 
 // Admin Route Handlers
 $router->get('/admin/dashboard', [AdminController::class, 'dashboard']);

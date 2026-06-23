@@ -100,7 +100,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
     <?php endif; ?>
 
     <!-- Analytics / Summary Cards -->
-    <div class="row g-4 mb-5">
+    <div class="row g-3 mb-5">
         <!-- Stat Item 1 -->
         <div class="col-xl-3 col-sm-6 col-12">
             <div class="card shadow-sm border border-light-subtle rounded-1 h-100 bg-white">
@@ -262,7 +262,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
                         <!-- Card Footer actions -->
                         <div class="bg-transparent border-top border-light-subtle p-3 mt-auto d-grid">
                             <?php if ($house['status'] === 'Approved'): ?>
-                                <a href="" class="btn btn-dark btn-sm py-2 rounded-3">
+                                <a href="<?php echo BASE_URL; ?>/owner/rooms/<?php echo (int)$house['id']; ?>" class="btn btn-dark btn-sm py-2 rounded-3">
                                     <i class="fa-solid fa-door-open me-2"></i>Manage Rooms
                                 </a>
                             <?php else: ?>
