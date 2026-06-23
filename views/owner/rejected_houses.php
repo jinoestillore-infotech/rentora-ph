@@ -6,6 +6,7 @@
  */
 
 // Include standard dynamic header
+$title = "Rejected House";
 require_once __DIR__ . '/../templates/header.php';
 $properties = $properties ?? [];
 ?>

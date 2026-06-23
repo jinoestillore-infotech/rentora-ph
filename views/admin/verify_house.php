@@ -8,6 +8,7 @@
 use App\Core\Security;
 
 // Include standard header template
+$title = "House Verification";
 require_once dirname(__DIR__) . '/templates/header.php';
 ?>
 

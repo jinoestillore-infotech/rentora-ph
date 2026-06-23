@@ -6,7 +6,9 @@
  */
 
 // Include the standard clean header template
+$title = "Dashboard";
 require_once dirname(__DIR__) . '/templates/header.php';
+
 ?>
 
 <style>

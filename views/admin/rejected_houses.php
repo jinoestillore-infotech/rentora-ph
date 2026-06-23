@@ -5,6 +5,7 @@
  * Description: Grayscale listing layout displaying all rejected applications with searchable reasons.
  */
 
+$title = "Rejected Houses";
 require_once dirname(__DIR__) . '/templates/header.php';
 $properties = $properties ?? [];
 ?>

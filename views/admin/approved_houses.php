@@ -5,6 +5,7 @@
  * Description: Clean, minimal layout to manage and list active, approved boarding houses.
  */
 
+$title = "Approved Houses";
 require_once dirname(__DIR__) . '/templates/header.php';
 $properties = $properties ?? [];
 ?>

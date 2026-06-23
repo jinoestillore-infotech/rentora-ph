@@ -6,6 +6,7 @@
  */
 
 // Include standard dynamic header
+$title = "Dashboard";
 require_once dirname(__DIR__) . '/templates/header.php';
 // Use the controller-provided pending properties, defaulting to an empty array if not set
 $pendingProperties = $pendingProperties ?? [];

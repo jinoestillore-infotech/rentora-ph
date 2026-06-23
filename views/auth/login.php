@@ -16,6 +16,7 @@ $oldEmail = $_SESSION['old_input']['email'] ?? '';
 unset($_SESSION['error'], $_SESSION['success'], $_SESSION['old_input']);
 
 // Safely load the header template matching the directory structure
+$title = "LOGIN";
 require_once dirname(__DIR__) . '/templates/header.php';
 ?>
 

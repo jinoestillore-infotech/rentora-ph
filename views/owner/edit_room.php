@@ -4,7 +4,7 @@
  * File Name: edit_room.php
  * Description: Standalone, modern, and minimalist edit page to adjust existing room characteristics.
  */
-
+$title = "Edit Room";
 require_once dirname(__DIR__) . '/templates/header.php';
 
 // Safe variables lookup

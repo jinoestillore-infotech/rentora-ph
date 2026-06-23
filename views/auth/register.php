@@ -16,6 +16,7 @@ $old = $_SESSION['old_input'] ?? [];
 unset($_SESSION['error'], $_SESSION['success'], $_SESSION['old_input']);
 
 // Include the clean header template
+$title = "REGISTER";
 require_once dirname(__DIR__) . '/templates/header.php';
 ?>
 

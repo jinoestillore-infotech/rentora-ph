@@ -33,7 +33,7 @@ if ($isLoggedIn) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RENTORA PH - Boarding House Finder & Management</title>
+    <title>RENTORA PH - <?php echo $title ?></title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -141,7 +141,12 @@ if ($isLoggedIn) {
                     <?php elseif ($userRole === 'Tenant'): ?>
                         <!-- Tenants see Browse Rooms and Logout -->
                         <li class="nav-item">
-                            <a class="nav-link px-3" href="<?php echo BASE_URL; ?>/">
+                            <a class="nav-link px-3" href="<?php echo $dashboardUrl; ?>">
+                                <i class="fa-solid fa-gauge me-1"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-3" href="<?php echo BASE_URL; ?>/tenant/browse">
                                 <i class="fa-solid fa-magnifying-glass me-1"></i> Browse Rooms
                             </a>
                         </li>

@@ -41,6 +41,7 @@ use App\Controllers\AdminRejectedController;
 use App\Controllers\OwnerRejectedController;
 use App\Controllers\AdminUserController;
 use App\Controllers\RoomController;
+use App\Controllers\TenantController;
 
 Security::startSecureSession();
 
@@ -89,6 +90,11 @@ $router->post('/admin/rejected-house/delete', [AdminRejectedController::class, '
 // New Admin User & Owner Account Management Handlers
 $router->get('/admin/users', [AdminUserController::class, 'index']);
 $router->post('/admin/user/toggle-status', [AdminUserController::class, 'toggleStatus']);
+
+// New Tenant Onboarding & Browsing Handlers
+$router->get('/tenant/dashboard', [TenantController::class, 'dashboard']);
+$router->get('/tenant/browse', [TenantController::class, 'index']);
+$router->get('/tenant/house/view/{houseId}', [TenantController::class, 'viewHouse']);
 
 
 // Fire router engine to resolve the request path

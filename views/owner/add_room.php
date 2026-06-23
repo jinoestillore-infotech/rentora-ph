@@ -6,6 +6,7 @@
  */
 use App\Core\Security;
 
+$title = "Add Room";
 require_once dirname(__DIR__) . '/templates/header.php';
 
 // Safe variables lookup

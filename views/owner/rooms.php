@@ -4,7 +4,7 @@
  * File Name: rooms.php
  * Description: Clean, modern, and professional Boarding House Dashboard for managing individual rooms.
  */
-
+$title = "Manage Rooms";
 require_once dirname(__DIR__) . '/templates/header.php';
 
 $rooms = $rooms ?? [];

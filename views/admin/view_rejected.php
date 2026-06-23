@@ -7,6 +7,7 @@
 
 use App\Core\Security;
 
+$title = "View Rejected";
 require_once dirname(__DIR__) . '/templates/header.php';
 $house = $house ?? [];
 ?>

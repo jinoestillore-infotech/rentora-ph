@@ -3,6 +3,8 @@
 use App\Core\Security;
 
 // Include standard clean header template
+$title = "Add House";
+
 require_once dirname(__DIR__) . '/templates/header.php';
 
 $boholTowns = [

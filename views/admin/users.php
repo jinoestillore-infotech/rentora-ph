@@ -6,6 +6,7 @@
  */
 
 // Include standard header template
+$title = "User Registry";
 require_once __DIR__ . '/../templates/header.php';
 $users = $users ?? [];
 $currentUserId = $_SESSION['user_id'] ?? 0;
