@@ -48,6 +48,27 @@ class TenantApplicationModel {
     }
 
     /**
+     * Retrieve all applications submitted by a specific tenant ID with details.
+     */
+    public function getApplicationsByTenantId(int $tenantId): array {
+        $sql = "SELECT ta.*, 
+                       bh.name as house_name, 
+                       bh.town as house_town, 
+                       bh.address as house_address,
+                       r.room_name, 
+                       r.price as room_price
+                FROM tenant_applications ta
+                JOIN boarding_houses bh ON ta.boarding_house_id = bh.id
+                JOIN rooms r ON ta.room_id = r.id
+                WHERE ta.tenant_id = :tenant_id
+                ORDER BY ta.created_at DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':tenant_id' => $tenantId]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+    
+    /**
      * Submit application registration fields to the database.
      */
     public function createApplication(array $data): bool {

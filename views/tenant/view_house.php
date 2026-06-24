@@ -49,7 +49,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
         </div>
         <div class="col-md-4 bg-light d-flex align-items-center justify-content-center px-3 m-0" style="min-height: 180px;">
             <?php if (!empty($house['image_path'])): ?>
-                <img src="<?php echo BASE_URL . '/public/' . htmlspecialchars($house['image_path'], ENT_QUOTES, 'UTF-8'); ?>" class="img-fluid h-100 w-100" style="object-fit: cover;" alt="Room Photo Layout">
+                <img src="<?php echo BASE_URL . '/public/' . htmlspecialchars($house['image_path'], ENT_QUOTES, 'UTF-8'); ?>" class="img-fluid w-100" style="height: 250px;" alt="Room Photo Layout">
             <?php else: ?>
                 <div class="text-center text-muted p-3">
                     <i class="fa-solid fa-bed fs-1 d-block mb-2 opacity-30"></i>

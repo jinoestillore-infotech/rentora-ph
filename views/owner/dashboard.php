@@ -2,13 +2,12 @@
 /**
  * File Location: views/owner/dashboard.php
  * File Name: dashboard.php
- * Description: Clean, professional, and modern card-based Owner Dashboard with integrated property image previews.
+ * Description: Clean, professional, and modern card-based Owner Dashboard optimized for mobile.
  */
 
 // Include the standard clean header template
 $title = "Dashboard";
 require_once dirname(__DIR__) . '/templates/header.php';
-
 ?>
 
 <style>
@@ -40,14 +39,27 @@ require_once dirname(__DIR__) . '/templates/header.php';
         height: 100%;
         object-fit: cover;
     }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 575.98px) {
+        .property-card-image-wrapper {
+            height: 150px;
+        }
+        .dashboard-header-title {
+            font-size: 1.5rem !important;
+        }
+        .property-card-title {
+            font-size: 1.1rem !important;
+        }
+    }
 </style>
 
 <div class="container my-5">
     <!-- Welcome Header banner -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center border-bottom border-light-subtle pb-4 mb-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center border-bottom border-light-subtle pb-4 mb-4">
         <div>
             <span class="text-uppercase text-muted fw-bold small tracking-wider" style="font-size: 0.75rem;">Dashboard Portal</span>
-            <h1 class="h2 fw-bold text-dark mb-1">Welcome, <?php echo htmlspecialchars($_SESSION['firstname'], ENT_QUOTES, 'UTF-8'); ?>!</h1>
+            <h1 class="h2 fw-bold text-dark mb-1 dashboard-header-title">Welcome, <?php echo htmlspecialchars($_SESSION['firstname'], ENT_QUOTES, 'UTF-8'); ?>!</h1>
             <p class="text-muted mb-0 small">Manage your boarding house properties, view approval records, and configure rooms.</p>
         </div>
         <a href="<?php echo BASE_URL; ?>/owner/add-house" class="btn btn-dark btn-sm mt-3 mt-md-0 px-4 py-2">
@@ -63,7 +75,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
     }));
     if ($rejectedCount > 0): 
     ?>
-        <div class="col-12 mt-3 mb-5">
+        <div class="col-12 mt-3 mb-4">
             <div class="card bg-danger-subtle border-0 rounded-3 shadow-sm">
                 <div class="card-body p-3 p-sm-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
                     <div class="d-flex align-items-start gap-3">
@@ -229,7 +241,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
 
                         <!-- Card Body Details -->
                         <div class="card-body p-4 flex-grow-1">
-                            <h5 class="fw-bold text-dark mb-2 text-truncate" title="<?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>">
+                            <h5 class="fw-bold text-dark mb-2 text-truncate property-card-title" title="<?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>">
                                 <?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>
                             </h5>
 
@@ -244,7 +256,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
                                     <span class="property-meta-icon"><i class="fa-solid fa-location-dot"></i></span>
                                     <span class="text-dark fw-medium text-truncate">
                                         <?php echo htmlspecialchars($house['town'], ENT_QUOTES, 'UTF-8'); ?> 
-                                        <span class="text-muted fw-normal d-block small mt-0.5 text-truncate"><?php echo htmlspecialchars($house['address'], ENT_QUOTES, 'UTF-8'); ?></span>
+                                        <span class="text-muted fw-normal d-block small mt-1 text-truncate"><?php echo htmlspecialchars($house['address'], ENT_QUOTES, 'UTF-8'); ?></span>
                                     </span>
                                 </div>
                                 <div class="d-flex align-items-center small text-muted">

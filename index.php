@@ -35,14 +35,16 @@ use App\Core\Security;
 use App\Core\Router;
 use App\Controllers\UserController;
 use App\Controllers\AuthController;
-use App\Controllers\OwnerController;
 use App\Controllers\AdminController;
-use App\Controllers\AdminRejectedController;
-use App\Controllers\OwnerRejectedController;
 use App\Controllers\AdminUserController;
+use App\Controllers\AdminRejectedController;
+use App\Controllers\OwnerController;
+use App\Controllers\OwnerRejectedController;
+use App\Controllers\OwnerApplicationController;
 use App\Controllers\RoomController;
 use App\Controllers\TenantController;
 use App\Controllers\TenantApplicationController;
+use App\Controllers\TenantApplicationStatusController;
 
 Security::startSecureSession();
 
@@ -73,6 +75,11 @@ $router->post('/owner/room/add', [RoomController::class, 'addRoom']);
 $router->get('/owner/room/edit/{houseId}/{roomId}', [RoomController::class, 'showEditForm']);
 $router->post('/owner/room/edit', [RoomController::class, 'editRoom']);
 $router->post('/owner/room/delete', [RoomController::class, 'deleteRoom']);
+// Owner Tenancy Applications Review Handlers
+$router->get('/owner/applications', [OwnerApplicationController::class, 'index']);
+$router->get('/owner/application/view/{id}', [OwnerApplicationController::class, 'view']);
+$router->post('/owner/application/approve', [OwnerApplicationController::class, 'approve']);
+$router->post('/owner/application/reject', [OwnerApplicationController::class, 'reject']);
 
 // Admin Route Handlers
 $router->get('/admin/dashboard', [AdminController::class, 'dashboard']);
@@ -99,6 +106,8 @@ $router->get('/tenant/house/inquire/{houseId}', [TenantController::class, 'inqui
 // New Tenant Apply Request Handlers
 $router->get('/tenant/house/apply/{houseId}', [TenantApplicationController::class, 'showApplyForm']);
 $router->post('/tenant/house/apply', [TenantApplicationController::class, 'handleApply']);
+// New Tenant Applications History Status Handler
+$router->get('/tenant/applications', [TenantApplicationStatusController::class, 'index']);
 
 // Fire router engine to resolve the request path
 $router->resolve();

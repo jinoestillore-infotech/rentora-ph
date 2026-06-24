@@ -3,6 +3,7 @@
  * File Location: views/tenant/browse.php
  * File Name: browse.php
  * Description: Clean, modern monochrome layout for searching, filtering, and exploring boarding houses.
+ * Fully optimized for mobile screens and featuring built-in pagination.
  */
 $title = "Browse House";
 require_once dirname(__DIR__) . '/templates/header.php';
@@ -45,12 +46,25 @@ $activePrice = $_GET['max_price'] ?? '';
         height: 100%;
         object-fit: cover;
     }
+
+    /* Mobile Responsive Optimizations */
+    @media (max-width: 575.98px) {
+        .browse-card-img-wrapper {
+            height: 160px;
+        }
+        .browse-card-title {
+            font-size: 1.1rem !important;
+        }
+        .filter-header-section {
+            text-align: center;
+        }
+    }
 </style>
 
 <div class="container my-5 mt-4">
     
     <!-- Title Section -->
-    <div class="pb-3 mb-2">
+    <div class="pb-3 mb-2 filter-header-section">
         <span class="text-uppercase text-muted fw-bold small tracking-wider" style="font-size: 0.75rem;">Explore Accommodations</span>
         <h1 class="h2 fw-bold text-dark mb-1">Find Your Next Room</h1>
         <p class="text-muted mb-0 small">Browse approved boarding houses, compare room pricing, and connect directly with local landlords.</p>
@@ -116,8 +130,8 @@ $activePrice = $_GET['max_price'] ?? '';
         </form>
     </div>
 
-    <!-- Grid Layout of Properties -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <!-- Grid Layout of Properties Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <h5 class="fw-bold text-dark mb-0">Listings</h5>
         <span class="badge bg-white text-dark border border-light-subtle py-2 px-3 rounded-1 small fw-semibold shadow-sm font-monospace">
             <?php echo count($properties); ?> Properties Found
@@ -133,9 +147,9 @@ $activePrice = $_GET['max_price'] ?? '';
             </div>
         </div>
     <?php else: ?>
-        <div class="row g-4">
+        <div class="row g-4" id="properties-container-grid">
             <?php foreach ($properties as $house): ?>
-                <div class="col-lg-4 col-md-6 col-12">
+                <div class="col-lg-4 col-md-6 col-12 browse-card-item">
                     <div class="card browse-property-card h-100 shadow-sm rounded-4 overflow-hidden d-flex flex-column">
                         
                         <!-- Header image container with visual overlays -->
@@ -152,11 +166,11 @@ $activePrice = $_GET['max_price'] ?? '';
                             <!-- Bed vacancy count dynamic tag -->
                             <div class="position-absolute bottom-0 start-0 m-3">
                                 <?php if ((int)$house['total_available_beds'] > 0): ?>
-                                    <span class="badge bg-white text-dark border border-light-subtle shadow-sm py-1.5 px-3 rounded-pill small font-monospace fw-bold">
+                                    <span class="badge bg-white text-dark border border-light-subtle shadow-sm py-2 px-3 rounded-pill small font-monospace fw-bold">
                                         <i class="fa-solid fa-bed text-success me-1"></i><?php echo (int)$house['total_available_beds']; ?> beds vacant
                                     </span>
                                 <?php else: ?>
-                                    <span class="badge bg-white text-danger border border-danger-subtle shadow-sm py-1.5 px-3 rounded-pill small font-monospace fw-bold">
+                                    <span class="badge bg-white text-danger border border-danger-subtle shadow-sm py-2 px-3 rounded-pill small font-monospace fw-bold">
                                         <i class="fa-solid fa-ban me-1"></i>Fully Occupied
                                     </span>
                                 <?php endif; ?>
@@ -172,7 +186,7 @@ $activePrice = $_GET['max_price'] ?? '';
                                 </span>
                             </div>
 
-                            <h5 class="fw-bold text-dark mb-2 text-truncate" title="<?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>">
+                            <h5 class="fw-bold text-dark mb-2 text-truncate browse-card-title" title="<?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>">
                                 <?php echo htmlspecialchars($house['name'], ENT_QUOTES, 'UTF-8'); ?>
                             </h5>
 
@@ -192,9 +206,9 @@ $activePrice = $_GET['max_price'] ?? '';
                                         <span class="text-muted small italic">No rooms listed</span>
                                     <?php endif; ?>
                                 </div>
-                                <span class="badge bg-light text-dark border rounded-pill py-1.5 px-2.5 font-monospace" style="font-size: 0.7rem;">
+                                <span class="badge bg-light text-dark border rounded-pill py-2 px-2 font-monospace" style="font-size: 0.7rem;">
                                     <?php echo (int)$house['room_count']; ?> rooms
-                                </span>
+                                end</span>
                             </div>
 
                         </div>
@@ -210,8 +224,106 @@ $activePrice = $_GET['max_price'] ?? '';
                 </div>
             <?php endforeach; ?>
         </div>
+
+        <!-- Unified Responsive Pagination Panel -->
+        <div class="card shadow-sm border border-light-subtle rounded-3 bg-white mt-5 py-2 px-4 d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+            <div class="text-muted small" id="pagination-info-stats">
+                Showing <span id="start-idx" class="fw-semibold">0</span> to <span id="end-idx" class="fw-semibold">0</span> of <span id="total-idx" class="fw-semibold">0</span> entries
+            </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination pagination-sm mb-0" id="pagination-buttons">
+                    <!-- Nav links will render dynamically via javascript -->
+                </ul>
+            </nav>
+        </div>
     <?php endif; ?>
 
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const cardsPerPage = 6; // Configures maximum properties displayed per index segment
+    const container = document.getElementById('properties-container-grid');
+    if (!container) return;
+
+    const cards = Array.from(container.getElementsByClassName('browse-card-item'));
+    const totalCards = cards.length;
+    
+    if (totalCards === 0) return;
+
+    let currentPage = 1;
+    const totalPages = Math.ceil(totalCards / cardsPerPage);
+
+    /**
+     * Slice layout page views, adjusting styling displays cleanly
+     */
+    function showPage(page) {
+        currentPage = page;
+        const start = (page - 1) * cardsPerPage;
+        const end = start + cardsPerPage;
+
+        cards.forEach((card, idx) => {
+            if (idx >= start && idx < end) {
+                card.style.setProperty('display', 'block', 'important');
+            } else {
+                card.style.setProperty('display', 'none', 'important');
+            }
+        });
+
+        // Update statistics tracking labels
+        document.getElementById('start-idx').textContent = start + 1;
+        document.getElementById('end-idx').textContent = Math.min(end, totalCards);
+        document.getElementById('total-idx').textContent = totalCards;
+
+        renderButtons();
+    }
+
+    /**
+     * Generate modular, dynamic pagination control bars
+     */
+    function renderButtons() {
+        const buttonsUl = document.getElementById('pagination-buttons');
+        if (!buttonsUl) return;
+        buttonsUl.innerHTML = '';
+
+        // "Previous" navigation anchor
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<button class="page-link text-dark" ${currentPage === 1 ? 'disabled' : ''} style="box-shadow: none;">Previous</button>`;
+        prevLi.addEventListener('click', function() {
+            if (currentPage > 1) showPage(currentPage - 1);
+        });
+        buttonsUl.appendChild(prevLi);
+
+        // Numeric selector elements
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = `page-item ${currentPage === i ? 'active' : ''}`;
+            
+            const customStyle = currentPage === i 
+                ? 'background-color: #1a1a1a; border-color: #1a1a1a; color: #ffffff !important;' 
+                : 'color: #1a1a1a;';
+
+            li.innerHTML = `<button class="page-link" style="box-shadow: none; ${customStyle}">${i}</button>`;
+            li.addEventListener('click', function() {
+                showPage(i);
+            });
+            buttonsUl.appendChild(li);
+        }
+
+        // "Next" navigation anchor
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<button class="page-link text-dark" ${currentPage === totalPages ? 'disabled' : ''} style="box-shadow: none;">Next</button>`;
+        nextLi.addEventListener('click', function() {
+            if (currentPage < totalPages) showPage(currentPage + 1);
+        });
+        buttonsUl.appendChild(nextLi);
+    }
+
+    // Initialize display state
+    showPage(1);
+});
+</script>
 
 <?php require_once dirname(__DIR__) . '/templates/footer.php'; ?>
