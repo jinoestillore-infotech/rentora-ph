@@ -3,11 +3,17 @@
  * File Location: views/tenant/applications.php
  * File Name: applications.php
  * Description: Clean, minimalist overview panel displaying the active, approved, or rejected applications submitted by a tenant. Fully optimized for mobile screens.
+ * Filtered to strictly display only Pending, Approved, and Rejected statuses.
  */
 
 $title = "Tenancy Application";
 require_once dirname(__DIR__) . '/templates/header.php';
+
+// Safe variables lookup and array filter to only display active tracking states
 $applications = $applications ?? [];
+$filteredApplications = array_filter($applications, function($app) {
+    return in_array($app['status'], ['Pending', 'Approved', 'Rejected']);
+});
 ?>
 
 <style>
@@ -88,7 +94,7 @@ $applications = $applications ?? [];
     <?php endif; ?>
 
     <!-- Applications Grid layout -->
-    <?php if (empty($applications)): ?>
+    <?php if (empty($filteredApplications)): ?>
         <div class="card border border-light-subtle rounded-3 bg-white text-center py-5 shadow-sm px-3">
             <div class="card-body">
                 <i class="fa-solid fa-file-signature text-muted fs-1 mb-3 opacity-40"></i>
@@ -103,7 +109,7 @@ $applications = $applications ?? [];
         </div>
     <?php else: ?>
         <div class="row g-4">
-            <?php foreach ($applications as $app): ?>
+            <?php foreach ($filteredApplications as $app): ?>
                 <div class="col-lg-6 col-12">
                     <div class="card application-status-card rounded-4 p-3 p-sm-4 shadow-sm h-100 d-flex flex-column justify-content-between">
                         <?php if ($app['status'] === 'Rejected'): ?>
@@ -139,7 +145,7 @@ $applications = $applications ?? [];
                                         <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-2 px-3 rounded-pill status-accent-badge d-inline-block">
                                             <i class="fa-solid fa-ban me-1"></i>Rejected
                                         </span>
-                                    <?php else: ?>
+                                    <?php elseif ($app['status'] === 'Pending'): ?>
                                         <span class="badge bg-warning-subtle text-warning border border-warning-subtle py-2 px-3 rounded-pill status-accent-badge d-inline-block" style="color: #856404 !important; border-color: #ffeeba !important; background-color: #fff3cd !important;">
                                             <i class="fa-solid fa-hourglass-half me-1"></i>Pending
                                         </span>
@@ -193,7 +199,7 @@ $applications = $applications ?? [];
                                         </div>
                                     </div>
                                 </div>
-                            <?php else: ?>
+                            <?php elseif ($app['status'] === 'Pending'): ?>
                                 <div class="small d-flex align-items-start text-muted" style="font-size: 0.8rem;">
                                     <i class="fa-solid fa-hourglass-half me-2 mt-0.5"></i>
                                     <span>Your profile dossier is currently sitting in the landlord’s pending evaluation console.</span>
@@ -208,6 +214,7 @@ $applications = $applications ?? [];
     <?php endif; ?>
 
 </div>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Select all alert notification banners on the page
@@ -234,4 +241,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 <?php require_once dirname(__DIR__) . '/templates/footer.php'; ?>

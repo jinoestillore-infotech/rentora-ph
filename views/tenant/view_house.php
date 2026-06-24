@@ -106,17 +106,17 @@ require_once dirname(__DIR__) . '/templates/header.php';
                                             
                                             <!-- Availability state metrics tags -->
                                             <div>
-                                                <?php if ($room['status'] === 'Available' && (int)$room['available_beds'] > 0): ?>
-                                                    <span class="badge bg-success-subtle text-success border border-success-subtle py-1 px-2 rounded-1 font-monospace" style="font-size: 0.69rem;">
-                                                        <?php echo (int)$room['available_beds']; ?> beds vacant
+                                                <?php if ($room['status'] === 'Maintenance'): ?>
+                                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle py-1 px-2 rounded-1 font-monospace" style="font-size: 0.69rem;">
+                                                        Maintenance
                                                     </span>
-                                                <?php elseif ($room['status'] === 'Fully Booked' || (int)$room['available_beds'] === 0): ?>
-                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1 px-2 rounded-1 font-monospace" style="font-size: 0.69rem;">
-                                                        Fully Occupied
+                                                <?php elseif ((int)$room['available_beds'] > 0): ?>
+                                                    <span class="badge bg-success-subtle text-success border border-success-subtle py-1 px-2 rounded-1 font-monospace" style="font-size: 0.69rem;">
+                                                        <?php echo (int)$room['available_beds']; ?> bed/s vacant
                                                     </span>
                                                 <?php else: ?>
-                                                    <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle py-1 px-2 rounded-1 font-monospace" style="font-size: 0.69rem;">
-                                                        <?php echo htmlspecialchars($room['status'], ENT_QUOTES, 'UTF-8'); ?>
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle py-1 px-2 rounded-1 font-monospace" style="font-size: 0.69rem;">
+                                                        Fully Occupied
                                                     </span>
                                                 <?php endif; ?>
                                             </div>

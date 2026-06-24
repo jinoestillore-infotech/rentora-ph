@@ -81,6 +81,7 @@ $router->get('/owner/applications', [OwnerApplicationController::class, 'index']
 $router->get('/owner/application/view/{id}', [OwnerApplicationController::class, 'view']);
 $router->post('/owner/application/approve', [OwnerApplicationController::class, 'approve']);
 $router->post('/owner/application/reject', [OwnerApplicationController::class, 'reject']);
+$router->post('/owner/application/delete', [OwnerApplicationController::class, 'delete']);
 // Owner Active Tenants Management Handlers
 $router->get('/owner/tenants', [OwnerTenantController::class, 'index']);
 $router->get('/owner/tenants/{roomId}', [OwnerTenantController::class, 'index']);

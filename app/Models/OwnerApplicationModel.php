@@ -100,4 +100,14 @@ class OwnerApplicationModel {
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([':room_id' => $roomId]);
     }
+
+    /**
+     * Securely deletes a tenant application from the database records.
+     */
+    public function delete(int $id): bool {
+        $sql = "DELETE FROM tenant_applications WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([':id' => $id]);
+    }
+
 }

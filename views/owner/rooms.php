@@ -36,21 +36,6 @@ $house = $house ?? [];
         height: 100%;
         object-fit: cover;
     }
-    .badge-available {
-        background-color: #e6fffa;
-        color: #0d9488;
-        border: 1px solid #b2f5ea;
-    }
-    .badge-booked {
-        background-color: #fef2f2;
-        color: #e11d48;
-        border: 1px solid #fecaca;
-    }
-    .badge-maintenance {
-        background-color: #fffbeb;
-        color: #d97706;
-        border: 1px solid #fef3c7;
-    }
 </style>
 
 <div class="container my-5 mt-4">
@@ -151,12 +136,12 @@ $house = $house ?? [];
                             
                             <!-- Status Badges inside the frame -->
                             <div class="position-absolute top-0 end-0 m-2">
-                                <?php if ($room['status'] === 'Available'): ?>
-                                    <span class="badge badge-available py-1 px-2 rounded-pill shadow-sm small font-monospace">Available</span>
-                                <?php elseif ($room['status'] === 'Fully Booked'): ?>
-                                    <span class="badge badge-booked py-1 px-2 rounded-pill shadow-sm small font-monospace">Fully Booked</span>
+                                <?php if ($room['status'] === 'Maintenance'): ?>
+                                    <span class="badge bg-secondary-subtle text-secondary py-1 px-2 rounded-pill shadow-sm small font-monospace">Maintenance</span>
+                                <?php elseif ((int)$room['available_beds'] > 0): ?>
+                                    <span class="badge bg-success-subtle text-success py-1 px-2 rounded-pill shadow-sm small font-monospace"><?php echo (int)$room['available_beds']; ?> Bed/s Available</span>
                                 <?php else: ?>
-                                    <span class="badge badge-maintenance py-1 px-2 rounded-pill shadow-sm small font-monospace">Maintenance</span>
+                                    <span class="badge bg-danger-subtle text-danger py-1 px-2 rounded-pill shadow-sm small font-monospace">Fully Occupied</span>
                                 <?php endif; ?>
                             </div>
                         </div>

@@ -74,7 +74,7 @@ $app = $application ?? [];
                     </span>
                 <?php else: ?>
                     <span class="badge bg-secondary text-white py-2 px-4 rounded-pill font-monospace shadow-sm">
-                        Evaluation Pending
+                        Evaluation Page
                     </span>
                 <?php endif; ?>
             </div>
@@ -276,7 +276,7 @@ $app = $application ?? [];
                 
                 <div class="modal-body p-4">
                     <!-- Policy Notification Banner -->
-                    <div class="alert border border-success-subtle rounded-3 p-3 mb-4 bg-white" style="color: #155724; background-color: #f0fff4 !important;" role="alert">
+                    <div class="alert-system border border-success-subtle rounded-3 p-3 mb-4 bg-white" style="color: #155724; background-color: #f0fff4 !important;" role="alert">
                         <div class="d-flex align-items-start gap-2">
                             <i class="fa-solid fa-circle-info mt-0.5 flex-shrink-0 text-success"></i>
                             <div class="small">

@@ -51,8 +51,8 @@ $selectedRoom = $selectedRoom ?? null;
     
     <!-- Top Nav links -->
     <div class="mb-4">
-        <a href="<?php echo BASE_URL; ?>/owner/rooms/<?php echo (int)$house['id']; ?>" class="text-decoration-none text-dark small fw-semibold">
-            <i class="fa-solid fa-arrow-left me-2"></i>Return to Rooms
+        <a href="<?php echo BASE_URL; ?>/owner/dashboard/" class="text-decoration-none text-dark small fw-semibold">
+            <i class="fa-solid fa-arrow-left me-2"></i>Return to Dashboard
         </a>
     </div>
 
@@ -137,7 +137,7 @@ $selectedRoom = $selectedRoom ?? null;
                                             data-id="<?php echo (int)$tenant['application_id']; ?>"
                                             data-name="<?php echo htmlspecialchars($tenant['firstname'] . ' ' . $tenant['lastname'], ENT_QUOTES, 'UTF-8'); ?>"
                                             data-room="<?php echo htmlspecialchars($tenant['room_name'], ENT_QUOTES, 'UTF-8'); ?>">
-                                        <i class="fa-solid fa-right-from-bracket me-1"></i> Check Out
+                                        Check Out
                                     </button>
                                 </td>
                             </tr>
@@ -187,7 +187,7 @@ $selectedRoom = $selectedRoom ?? null;
                                     data-id="<?php echo (int)$tenant['application_id']; ?>"
                                     data-name="<?php echo htmlspecialchars($tenant['firstname'] . ' ' . $tenant['lastname'], ENT_QUOTES, 'UTF-8'); ?>"
                                     data-room="<?php echo htmlspecialchars($tenant['room_name'], ENT_QUOTES, 'UTF-8'); ?>">
-                                <i class="fa-solid fa-right-from-bracket me-2"></i>Execute Check Out
+                                Execute Check Out
                             </button>
                         </div>
                         

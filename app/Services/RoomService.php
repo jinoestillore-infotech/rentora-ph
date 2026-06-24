@@ -76,13 +76,19 @@ class RoomService {
             $this->unlinkPhysicalFile($existingRoom['image_path']);
         }
 
+        // Automatically synchronize status with physical bed vacancy
+        $status = $inputs['status'];
+        if ($status !== 'Maintenance') {
+            $status = ((int)$inputs['available_beds'] === 0) ? 'Fully Booked' : 'Available';
+        }
+
         $updateData = [
             'room_name'      => trim($inputs['room_name']),
             'price'          => (float)$inputs['price'],
             'capacity'       => (int)$inputs['capacity'],
             'available_beds' => (int)$inputs['available_beds'],
             'amenities'      => trim($inputs['amenities'] ?? ''),
-            'status'         => $inputs['status'],
+            'status'         => $status,
             'image_path'     => $imagePath
         ];
 

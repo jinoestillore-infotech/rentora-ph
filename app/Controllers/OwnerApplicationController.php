@@ -134,4 +134,56 @@ class OwnerApplicationController {
             exit();
         }
     }
+
+    /**
+     * Handles POST request to delete a rejected application.
+     * Maps to POST /owner/application/delete
+     */
+    public function delete(): void {
+        $this->checkOwnerAccess();
+
+        $csrfToken = $_POST['csrf_token'] ?? '';
+        if (!Security::validateCsrfToken($csrfToken)) {
+            $_SESSION['error'] = "Anti-forgery token expired. Please reload and try again.";
+            header("Location: " . BASE_URL . "/owner/applications");
+            exit();
+        }
+
+        $applicationId = isset($_POST['application_id']) ? (int)$_POST['application_id'] : 0;
+        $ownerId = (int)$_SESSION['user_id'];
+
+        try {
+            // Fetch application details to assert owner legitimacy and status
+            $app = $this->applicationModel->getApplicationDetails($applicationId, $ownerId);
+            if (!$app || $app['status'] !== 'Rejected') {
+                throw new Exception("Unauthorized or only rejected applications can be deleted.");
+            }
+
+            $basePublicPath = dirname(dirname(__DIR__)) . '/public/';
+            
+            // Delete uploaded Verification ID File
+            if (!empty($app['verification_id_path'])) {
+                $file = $basePublicPath . $app['verification_id_path'];
+                if (file_exists($file) && is_file($file)) {
+                    unlink($file);
+                }
+            }
+
+            // Delete uploaded Emergency ID File
+            if (!empty($app['emergency_verification_id_path'])) {
+                $file = $basePublicPath . $app['emergency_verification_id_path'];
+                if (file_exists($file) && is_file($file)) {
+                    unlink($file);
+                }
+            }
+
+            $this->applicationModel->delete($applicationId);
+            $_SESSION['success'] = "Rejected application deleted successfully.";
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+        }
+
+        header("Location: " . BASE_URL . "/owner/applications");
+        exit();
+    }
 }

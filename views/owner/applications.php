@@ -3,12 +3,18 @@
  * File Location: views/owner/applications.php
  * File Name: applications.php
  * Description: High-contrast, mobile-responsive landlord inbox console to track incoming tenant applications.
+ * Modified to only display Rejected and Pending statuses, with Delete operations for Rejected files.
  */
 
 // Include standard dynamic header
 $title = "Tenancy Bookings";
 require_once dirname(__DIR__) . '/templates/header.php';
+
+// Filter applications array to keep only Pending and Rejected statuses
 $applications = $applications ?? [];
+$filteredApplications = array_filter($applications, function($app) {
+    return in_array($app['status'], ['Pending', 'Rejected']);
+});
 ?>
 
 <style>
@@ -92,12 +98,12 @@ $applications = $applications ?? [];
     <?php endif; ?>
 
     <!-- Empty State Callback -->
-    <?php if (empty($applications)): ?>
+    <?php if (empty($filteredApplications)): ?>
         <div class="card shadow-sm border border-light-subtle rounded-3 bg-white text-center py-5">
             <div class="card-body py-5">
                 <i class="fa-solid fa-folder-open text-muted fs-1 mb-3 opacity-40"></i>
-                <h5 class="fw-semibold text-dark">No Applications Found</h5>
-                <p class="text-muted small mb-0">You currently have no incoming tenancy applications to review for your properties.</p>
+                <h5 class="fw-semibold text-dark">No Pending or Rejected Applications Found</h5>
+                <p class="text-muted small mb-0">You currently have no incoming tenancy applications requiring verification in your properties.</p>
             </div>
         </div>
     <?php else: ?>
@@ -117,7 +123,7 @@ $applications = $applications ?? [];
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($applications as $app): ?>
+                        <?php foreach ($filteredApplications as $app): ?>
                             <tr>
                                 <td class="py-3 px-4">
                                     <span class="fw-bold text-dark d-block"><?php echo htmlspecialchars($app['firstname'] . ' ' . $app['lastname'], ENT_QUOTES, 'UTF-8'); ?></span>
@@ -144,9 +150,18 @@ $applications = $applications ?? [];
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-end">
-                                    <a href="<?php echo BASE_URL; ?>/owner/application/view/<?php echo (int)$app['id']; ?>" class="btn btn-dark btn-sm py-1 px-3">
-                                        <i class="fa-solid fa-file-magnifying-glass me-1"></i> Review
-                                    </a>
+                                    <?php if ($app['status'] === 'Rejected'): ?>
+                                        <button type="button" class="btn btn-outline-danger btn-sm py-1.5 px-3 rounded-1 fw-bold delete-app-btn"
+                                                data-bs-toggle="modal" data-bs-target="#deleteAppModal"
+                                                data-id="<?php echo (int)$app['id']; ?>"
+                                                data-name="<?php echo htmlspecialchars($app['firstname'] . ' ' . $app['lastname'], ENT_QUOTES, 'UTF-8'); ?>">
+                                            Delete
+                                        </button>
+                                    <?php else: ?>
+                                        <a href="<?php echo BASE_URL; ?>/owner/application/view/<?php echo (int)$app['id']; ?>" class="btn btn-dark btn-sm py-1 px-3">
+                                            Review
+                                        </a>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -157,7 +172,7 @@ $applications = $applications ?? [];
 
         <!-- MOBILE SCREEN VIEW (Elegant, stackable card layouts optimized for device tap actions) -->
         <div class="row g-3 mobile-cards-view" style="display: none;">
-            <?php foreach ($applications as $app): ?>
+            <?php foreach ($filteredApplications as $app): ?>
                 <div class="col-12">
                     <div class="card inbox-card rounded-3 p-3 shadow-sm">
                         <div class="d-flex justify-content-between align-items-start mb-2">
@@ -179,13 +194,22 @@ $applications = $applications ?? [];
                         <div class="py-2 border-top border-bottom border-light-subtle my-2">
                             <span class="text-muted small d-block mb-1" style="font-size: 0.7rem; text-transform: uppercase;">Accommodation Target</span>
                             <span class="text-dark fw-bold d-block" style="font-size: 0.85rem;"><?php echo htmlspecialchars($app['house_name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            <span class="text-muted small d-block" style="font-size: 0.8rem;"><strong>Layout:</strong> <?php echo htmlspecialchars($app['room_name'], ENT_QUOTES, 'UTF-8'); ?> (₱<?php echo number_format($app['room_price'], 2); ?>)</span>
+                            <span class="text-muted small d-block" style="font-size: 0.8rem;">Layout: <?php echo htmlspecialchars($app['room_name'], ENT_QUOTES, 'UTF-8'); ?> (₱<?php echo number_format($app['room_price'], 2); ?>)</span>
                         </div>
 
                         <div class="d-grid mt-2">
-                            <a href="<?php echo BASE_URL; ?>/owner/application/view/<?php echo (int)$app['id']; ?>" class="btn btn-dark btn-sm py-2">
-                                <i class="fa-solid fa-file-magnifying-glass me-2"></i>Review Credentials
-                            </a>
+                            <?php if ($app['status'] === 'Rejected'): ?>
+                                <button type="button" class="btn btn-outline-danger btn-sm py-2 rounded-2 fw-bold delete-app-btn"
+                                        data-bs-toggle="modal" data-bs-target="#deleteAppModal"
+                                        data-id="<?php echo (int)$app['id']; ?>"
+                                        data-name="<?php echo htmlspecialchars($app['firstname'] . ' ' . $app['lastname'], ENT_QUOTES, 'UTF-8'); ?>">
+                                    Delete Application
+                                </button>
+                            <?php else: ?>
+                                <a href="<?php echo BASE_URL; ?>/owner/application/view/<?php echo (int)$app['id']; ?>" class="btn btn-dark btn-sm py-2">
+                                    Review Credentials
+                                </a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -195,6 +219,52 @@ $applications = $applications ?? [];
     <?php endif; ?>
 
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteAppModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3 border-0 shadow">
+            <div class="modal-header border-bottom border-light-subtle py-3 px-4">
+                <h6 class="modal-title fw-bold text-dark" id="deleteModalLabel">
+                    <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>Confirm Application Deletion
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form action="<?php echo BASE_URL; ?>/owner/application/delete" method="POST">
+                <?php echo \App\Core\Security::csrfField(); ?>
+                <input type="hidden" id="modal-delete-application-id" name="application_id" value="">
+                
+                <div class="modal-body p-4">
+                    <p class="small text-muted mb-0">
+                        Are you sure you want to permanently delete the rejected application for <strong id="modal-delete-tenant-name">Applicant</strong>? This action will immediately remove their dossier and files from RENTORA PH storage.
+                    </p>
+                </div>
+                
+                <div class="modal-footer border-top border-light-subtle py-2 px-4 d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-light btn-sm rounded-1" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm rounded-1 px-4 fw-bold">Delete Permanently</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const deleteAppModal = document.getElementById('deleteAppModal');
+    if (deleteAppModal) {
+        deleteAppModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const appId = button.getAttribute('data-id');
+            const tenantName = button.getAttribute('data-name');
+
+            document.getElementById('modal-delete-application-id').value = appId;
+            document.getElementById('modal-delete-tenant-name').textContent = tenantName;
+        });
+    }
+});
+</script>
 
 <?php 
 // Include standard footer template

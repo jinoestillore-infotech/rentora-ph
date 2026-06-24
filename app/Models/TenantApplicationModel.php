@@ -38,7 +38,7 @@ class TenantApplicationModel {
         $sql = "SELECT id, room_name, price, capacity, available_beds 
                 FROM rooms 
                 WHERE boarding_house_id = :house_id 
-                  AND status = 'Available' 
+                  AND status != 'Maintenance' 
                   AND available_beds > 0 
                 ORDER BY price ASC";
         
