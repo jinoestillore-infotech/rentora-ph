@@ -152,11 +152,11 @@ $house = $house ?? [];
                             <!-- Status Badges inside the frame -->
                             <div class="position-absolute top-0 end-0 m-2">
                                 <?php if ($room['status'] === 'Available'): ?>
-                                    <span class="badge badge-available py-1 px-2.5 rounded-pill shadow-sm small font-monospace">Available</span>
+                                    <span class="badge badge-available py-1 px-2 rounded-pill shadow-sm small font-monospace">Available</span>
                                 <?php elseif ($room['status'] === 'Fully Booked'): ?>
-                                    <span class="badge badge-booked py-1 px-2.5 rounded-pill shadow-sm small font-monospace">Fully Booked</span>
+                                    <span class="badge badge-booked py-1 px-2 rounded-pill shadow-sm small font-monospace">Fully Booked</span>
                                 <?php else: ?>
-                                    <span class="badge badge-maintenance py-1 px-2.5 rounded-pill shadow-sm small font-monospace">Maintenance</span>
+                                    <span class="badge badge-maintenance py-1 px-2 rounded-pill shadow-sm small font-monospace">Maintenance</span>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -202,16 +202,31 @@ $house = $house ?? [];
                         </div>
 
                         <!-- Card Action Hooks -->
-                        <div class="bg-transparent border-top border-light-subtle p-3 mt-auto d-flex gap-2">
-                            <a href="<?php echo BASE_URL; ?>/owner/room/edit/<?php echo (int)$house['id']; ?>/<?php echo (int)$room['id']; ?>" class="btn btn-dark btn-sm w-100">
-                                <i class="fa-solid fa-pen-to-square me-1"></i> Edit Room
+                        <div class="bg-transparent border-top border-light-subtle p-3 mt-auto">
+
+                            <!-- Full-width primary action -->
+                            <a href="<?php echo BASE_URL; ?>/owner/tenants/<?php echo (int)$room['id']; ?>"
+                            class="btn btn-dark btn-sm w-100 mb-2 py-2">
+                                Manage Tenants
                             </a>
-                            <button type="button" class="btn btn-outline-danger btn-sm px-3 delete-room-btn" 
-                                    data-id="<?php echo (int)$room['id']; ?>"
-                                    data-name="<?php echo htmlspecialchars($room['room_name'], ENT_QUOTES, 'UTF-8'); ?>"
-                                    data-bs-toggle="modal" data-bs-target="#deleteRoomModal">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
+
+                            <!-- Secondary actions -->
+                            <div class="d-flex gap-2">
+                                <a href="<?php echo BASE_URL; ?>/owner/room/edit/<?php echo (int)$house['id']; ?>/<?php echo (int)$room['id']; ?>"
+                                class="btn btn-outline-dark btn-sm flex-fill py-2 w-75 fw-bold">
+                                    Edit Room
+                                </a>
+
+                                <button type="button"
+                                        class="btn btn-outline-danger btn-sm delete-room-btn w-75 fw-bold"
+                                        data-id="<?php echo (int)$room['id']; ?>"
+                                        data-name="<?php echo htmlspecialchars($room['room_name'], ENT_QUOTES, 'UTF-8'); ?>"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteRoomModal">
+                                    Delete
+                                </button>
+                            </div>
+
                         </div>
 
                     </div>

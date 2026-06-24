@@ -41,6 +41,7 @@ use App\Controllers\AdminRejectedController;
 use App\Controllers\OwnerController;
 use App\Controllers\OwnerRejectedController;
 use App\Controllers\OwnerApplicationController;
+use App\Controllers\OwnerTenantController;
 use App\Controllers\RoomController;
 use App\Controllers\TenantController;
 use App\Controllers\TenantApplicationController;
@@ -80,6 +81,11 @@ $router->get('/owner/applications', [OwnerApplicationController::class, 'index']
 $router->get('/owner/application/view/{id}', [OwnerApplicationController::class, 'view']);
 $router->post('/owner/application/approve', [OwnerApplicationController::class, 'approve']);
 $router->post('/owner/application/reject', [OwnerApplicationController::class, 'reject']);
+// Owner Active Tenants Management Handlers
+$router->get('/owner/tenants', [OwnerTenantController::class, 'index']);
+$router->get('/owner/tenants/{roomId}', [OwnerTenantController::class, 'index']);
+$router->post('/owner/tenant/checkout', [OwnerTenantController::class, 'checkout']);
+
 
 // Admin Route Handlers
 $router->get('/admin/dashboard', [AdminController::class, 'dashboard']);
@@ -97,6 +103,7 @@ $router->post('/admin/rejected-house/delete', [AdminRejectedController::class, '
 // New Admin User & Owner Account Management Handlers
 $router->get('/admin/users', [AdminUserController::class, 'index']);
 $router->post('/admin/user/toggle-status', [AdminUserController::class, 'toggleStatus']);
+
 
 // New Tenant Onboarding & Browsing Handlers
 $router->get('/tenant/dashboard', [TenantController::class, 'dashboard']);
