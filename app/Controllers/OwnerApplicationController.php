@@ -119,11 +119,13 @@ class OwnerApplicationController {
         }
 
         $applicationId = isset($_POST['application_id']) ? (int)$_POST['application_id'] : 0;
+        $reason = $_POST['reason'] ?? '';
         $ownerId = (int)$_SESSION['user_id'];
 
         try {
-            $this->applicationService->rejectApplication($applicationId, $ownerId);
-            $_SESSION['success'] = "The tenancy application has been marked as Rejected.";
+            // Service receives the application ID and the typed reason for validation and logging
+            $this->applicationService->rejectApplication($applicationId, $ownerId, $reason);
+            $_SESSION['success'] = "The tenancy application has been marked as Rejected and the reason was logged.";
             header("Location: " . BASE_URL . "/owner/applications");
             exit();
         } catch (Exception $e) {

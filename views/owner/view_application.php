@@ -6,6 +6,8 @@
  * Optimized for flawless mobile screen adaptability and standard Bootstrap 5 layouts.
  */
 
+use App\Core\Security;
+
 // Include standard dynamic header
 $title = "View Tenancy Application";
 require_once dirname(__DIR__) . '/templates/header.php';
@@ -237,24 +239,16 @@ $app = $application ?? [];
                     
                     <div class="row g-3">
                         <div class="col-md-6 col-12">
-                            <!-- Rejection Form -->
-                            <form action="<?php echo BASE_URL; ?>/owner/application/reject" method="POST" onsubmit="return confirm('Are you sure you want to REJECT this tenancy application?');">
-                                <?php echo \App\Core\Security::csrfField(); ?>
-                                <input type="hidden" name="application_id" value="<?php echo (int)$app['id']; ?>">
-                                <button type="submit" class="btn btn-outline-danger w-100 py-2 rounded-1 small fw-bold">
-                                    Reject Application
-                                </button>
-                            </form>
+                            <!-- Trigger Rejection Modal -->
+                            <button type="button" class="btn btn-outline-danger w-100 py-2 rounded-1 small fw-bold" data-bs-toggle="modal" data-bs-target="#rejectionReasonModal">
+                                Reject Application
+                            </button>
                         </div>
                         <div class="col-md-6 col-12">
-                            <!-- Approval Form -->
-                            <form action="<?php echo BASE_URL; ?>/owner/application/approve" method="POST" onsubmit="return confirm('Are you sure you want to APPROVE this application? Approving will decrement available beds in this room.');">
-                                <?php echo \App\Core\Security::csrfField(); ?>
-                                <input type="hidden" name="application_id" value="<?php echo (int)$app['id']; ?>">
-                                <button type="submit" class="btn btn-dark w-100 py-2 rounded-1 small fw-bold">
-                                    Approve Application
-                                </button>
-                            </form>
+                            <!-- Trigger Approval Modal -->
+                            <button type="button" class="btn btn-dark w-100 py-2 rounded-1 small fw-bold" data-bs-toggle="modal" data-bs-target="#approveModal">
+                                Approve Application
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -264,6 +258,126 @@ $app = $application ?? [];
         
     </div>
 </div>
+
+<!-- Approved Application Modal -->
+<div class="modal fade" id="approveModal" tabindex="-1" aria-labelledby="approveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3 border-0 shadow">
+            <div class="modal-header border-bottom border-light-subtle py-3 px-4">
+                <h6 class="modal-title fw-bold text-dark" id="approveModalLabel">
+                    <i class="fa-solid fa-circle-check text-success me-2"></i>Confirm Tenancy Approval
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form action="<?php echo BASE_URL; ?>/owner/application/approve" method="POST">
+                <?php echo Security::csrfField(); ?>
+                <input type="hidden" name="application_id" value="<?php echo (int)$app['id']; ?>">
+                
+                <div class="modal-body p-4">
+                    <!-- Policy Notification Banner -->
+                    <div class="alert border border-success-subtle rounded-3 p-3 mb-4 bg-white" style="color: #155724; background-color: #f0fff4 !important;" role="alert">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="fa-solid fa-circle-info mt-0.5 flex-shrink-0 text-success"></i>
+                            <div class="small">
+                                <strong class="d-block mb-1">Verification Confirmation:</strong>
+                                <span class="leading-relaxed">
+                                    Approving this tenant automatically decrements the remaining bed capacity in the room from <strong><?php echo (int)$app['available_beds']; ?></strong> to <strong><?php echo max(0, (int)$app['available_beds'] - 1); ?></strong>.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p class="small text-muted mb-0">
+                        By approving this request, applicant <strong><?php echo htmlspecialchars($app['firstname'] . ' ' . $app['lastname'], ENT_QUOTES, 'UTF-8'); ?></strong> will be assigned an active slot in <strong><?php echo htmlspecialchars($app['room_name'], ENT_QUOTES, 'UTF-8'); ?></strong>. An approval notification will appear on the tenant's dashboard immediately.
+                    </p>
+                </div>
+                
+                <!-- Action Buttons inside Modal Footer -->
+                <div class="modal-footer border-top border-light-subtle py-2 px-4 d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-light btn-sm rounded-1 px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success btn-sm rounded-1 px-4 fw-bold text-white">Confirm Approval</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Rejection Reason Modal -->
+<div class="modal fade" id="rejectionReasonModal" tabindex="-1" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3 border-0 shadow">
+            <div class="modal-header border-bottom border-light-subtle py-3 px-4">
+                <h6 class="modal-title fw-bold text-dark" id="rejectionModalLabel">
+                    <i class="fa-solid fa-triangle-exclamation text-danger me-2"></i>Provide Rejection Reason
+                </h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <form action="<?php echo BASE_URL; ?>/owner/application/reject" method="POST">
+                <?php echo Security::csrfField(); ?>
+                <input type="hidden" name="application_id" value="<?php echo (int)$app['id']; ?>">
+                
+                <div class="modal-body p-4">
+                    <!-- Policy Notification Banner -->
+                    <div class="alert-system alert-warning border border-warning-subtle rounded-3 p-3 mb-4 bg-white" style="color: #664d03;">
+                        <div class="d-flex align-items-start gap-2">
+                            <i class="fa-solid fa-clock mt-0.5 flex-shrink-0 text-warning"></i>
+                            <div class="small">
+                                <strong class="d-block mb-1">Tenant Clean-up Alert:</strong>
+                                <span class="leading-relaxed">
+                                    Once you reject this booking request, the application profile and both uploaded identity verification cards will be completely deleted from our database and disk storage in <strong>2 days (48 hours)</strong>.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Reason Field -->
+                    <div class="mb-3">
+                        <label for="reason" class="form-label small fw-semibold text-secondary">Explanation Note <span class="text-danger">*</span></label>
+                        <textarea id="reason" name="reason" class="form-control" rows="4" required placeholder="Specify why you are declining this application (e.g., Unclear scan images, mismatched student profiles, or layout select errors)..."></textarea>
+                        <div class="form-text text-muted small mt-1" style="font-size: 0.7rem;">
+                            This reason gets shared with the tenant on their portal to let them know how to reapply correctly.
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons inside Modal Footer -->
+                <div class="modal-footer border-top border-light-subtle py-2 px-4 d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-light btn-sm rounded-1 px-3" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm rounded-1 px-4 fw-bold">Confirm Rejection</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all alert notification banners on the page
+    const alertElements = document.querySelectorAll('.alert-system');
+    
+    alertElements.forEach(function(alert) {
+        // Automatically trigger dismissal after 5 seconds
+        setTimeout(function() {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                // Use Bootstrap's native transition effects to safely close the alert
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                if (bsAlert) {
+                    bsAlert.close();
+                }
+            } else {
+                // Minimalist visual fallback if Bootstrap is not completely loaded
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);
+            }
+        }, 6000); // 6000ms = 6 seconds
+    });
+});
+</script>
 
 <?php 
 // Include standard footer template

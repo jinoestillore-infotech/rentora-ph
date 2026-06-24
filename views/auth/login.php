@@ -66,7 +66,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
                         <div class="mb-3">
                             <label for="email">Email Address <span class="text-danger">*</span></label>
                             <input type="email" class="form-control" id="email" name="email" 
-                                   placeholder="juan.delacruz@example.com" 
+                                   placeholder="username@email.com" 
                                    value="<?php echo htmlspecialchars($oldEmail, ENT_QUOTES, 'UTF-8'); ?>" required autofocus>
                         </div>
 

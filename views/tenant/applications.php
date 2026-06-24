@@ -106,7 +106,17 @@ $applications = $applications ?? [];
             <?php foreach ($applications as $app): ?>
                 <div class="col-lg-6 col-12">
                     <div class="card application-status-card rounded-4 p-3 p-sm-4 shadow-sm h-100 d-flex flex-column justify-content-between">
-                        
+                        <?php if ($app['status'] === 'Rejected'): ?>
+                            <!-- Automatic 2-day deletion warning panel -->
+                            <div class="alert-system alert-warning border border-warning-subtle rounded-3 p-3 my-1 mb-3 bg-white" style="color: #664d03; font-size: 0.75rem;">
+                                <div class="d-flex align-items-start gap-2">
+                                    <i class="fa-solid fa-clock mt-0.5 flex-shrink-0 text-warning"></i>
+                                    <div>
+                                        <strong>Platform Storage Notice:</strong> This application and your uploaded files will be permanently purged after <strong>2 days (48 hours)</strong> from rejection. Please review the reason below and file a new request.
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif ?>
                         <div>
                             <!-- Header Frame with responsive layout stack -->
                             <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start mb-3 gap-3">
@@ -172,9 +182,16 @@ $applications = $applications ?? [];
                                     <span>Congrats! The owner has verified your dossier. Please prepare payment credentials.</span>
                                 </div>
                             <?php elseif ($app['status'] === 'Rejected'): ?>
-                                <div class="small d-flex align-items-start text-danger" style="font-size: 0.8rem;">
-                                    <i class="fa-solid fa-circle-exclamation me-2 mt-0.5"></i>
-                                    <span>Validation rejected. Please submit correct identity and verification logs next time.</span>
+                                <div class="d-flex flex-column gap-3">
+                                    <div class="small d-flex align-items-start text-danger" style="font-size: 0.85rem;">
+                                        <i class="fa-solid fa-circle-exclamation me-2 mt-0.5 flex-shrink-0"></i>
+                                        <div>
+                                            <span class="fw-bold">Reason for Rejection:</span>
+                                            <p class="mb-0 mt-1 bg-danger-subtle p-3 rounded border border-danger-subtle font-monospace text-dark leading-relaxed" style="font-size: 0.8rem; background-color: #fff5f5 !important; color: #c53030 !important;">
+                                                <?php echo htmlspecialchars($app['rejection_reason'] ?? 'No custom explanatory log was provided by the landlord.', ENT_QUOTES, 'UTF-8'); ?>
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             <?php else: ?>
                                 <div class="small d-flex align-items-start text-muted" style="font-size: 0.8rem;">
@@ -191,5 +208,30 @@ $applications = $applications ?? [];
     <?php endif; ?>
 
 </div>
-
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Select all alert notification banners on the page
+    const alertElements = document.querySelectorAll('.alert-system');
+    
+    alertElements.forEach(function(alert) {
+        // Automatically trigger dismissal after 5 seconds
+        setTimeout(function() {
+            if (typeof bootstrap !== 'undefined' && bootstrap.Alert) {
+                // Use Bootstrap's native transition effects to safely close the alert
+                const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                if (bsAlert) {
+                    bsAlert.close();
+                }
+            } else {
+                // Minimalist visual fallback if Bootstrap is not completely loaded
+                alert.style.transition = 'opacity 0.5s ease-out';
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.remove();
+                }, 500);
+            }
+        }, 6000); // 6000ms = 6 seconds
+    });
+});
+</script>
 <?php require_once dirname(__DIR__) . '/templates/footer.php'; ?>

@@ -68,9 +68,9 @@ class OwnerApplicationService {
     }
 
     /**
-     * Rejects a tenant application. No room bed counts are changed.
+     * Rejects a tenant application, saving a mandatory justification reason.
      */
-    public function rejectApplication(int $applicationId, int $ownerId): bool {
+    public function rejectApplication(int $applicationId, int $ownerId, string $reason): bool {
         $application = $this->applicationModel->getApplicationDetails($applicationId, $ownerId);
         
         if (!$application) {
@@ -81,11 +81,38 @@ class OwnerApplicationService {
             throw new Exception("This application has already been processed and is currently marked as " . $application['status'] . ".");
         }
 
-        $result = $this->applicationModel->updateStatus($applicationId, 'Rejected');
-        if (!$result) {
-            throw new Exception("An internal storage error occurred while updating status.");
+        $trimmedReason = trim($reason);
+        if (empty($trimmedReason)) {
+            throw new Exception("Please specify a valid reason for rejecting this tenancy application.");
         }
 
-        return true;
+        if (strlen($trimmedReason) > 1000) {
+            throw new Exception("Rejection reasons must not exceed 1000 characters.");
+        }
+
+        try {
+            $this->db->beginTransaction();
+
+            // 1. Update application status flag to Rejected
+            $statusUpdated = $this->applicationModel->updateStatus($applicationId, 'Rejected');
+            if (!$statusUpdated) {
+                throw new Exception("Failed to update status parameters on application rejection.");
+            }
+
+            // 2. Insert or update the rejection justification text
+            $reasonSaved = $this->applicationModel->saveRejectionReason($applicationId, $trimmedReason);
+            if (!$reasonSaved) {
+                throw new Exception("An internal error occurred while saving the rejection reason.");
+            }
+
+            $this->db->commit();
+            return true;
+
+        } catch (Exception $e) {
+            if ($this->db->inTransaction()) {
+                $this->db->rollBack();
+            }
+            throw $e;
+        }
     }
 }

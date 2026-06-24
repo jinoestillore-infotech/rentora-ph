@@ -140,7 +140,7 @@ require_once dirname(__DIR__) . '/templates/header.php';
     <?php endif; ?>
 
     <!-- Analytics / Summary Cards -->
-    <div class="row g-3 mb-5">
+    <div class="row g-3 mb-4">
         <!-- Stat Item 1 -->
         <div class="col-xl-3 col-sm-6 col-12">
             <div class="card shadow-sm border border-light-subtle rounded-1 h-100 bg-white">
@@ -207,8 +207,12 @@ require_once dirname(__DIR__) . '/templates/header.php';
         </div>
     </div>
 
+    <a href="<?php echo BASE_URL; ?>/owner/applications" class="btn btn-dark rounded-2 fw-bold my-3 py-2 px-4 shadow-sm text-nowrap align-self-stretch align-self-md-center text-white">
+        View Applicants
+    </a>
+
     <!-- Boarding Houses Grid Section -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-2">
         <h5 class="fw-bold text-dark mb-0">
             Registered Properties
         </h5>

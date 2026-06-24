@@ -96,6 +96,31 @@ $shortcutTowns = ['Tagbilaran City', 'Panglao', 'Tubigon', 'Ubay', 'Inabanga', '
         </div>
     </div>
 
+    <!-- Dynamic Rejection Applications Alert Notification -->
+    <?php if (!empty($rejectedApps)): ?>
+        <?php foreach ($rejectedApps as $rejectedApp): ?>
+            <div class="col-12 mt-3 mb-4">
+                <div class="card bg-danger-subtle border-0 rounded-3 shadow-sm">
+                    <div class="card-body p-3 p-sm-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="text-danger fs-3 mt-1">
+                                <i class="fa-solid fa-circle-exclamation text-danger"></i>
+                            </div>
+                            <div>
+                                <span class="text-uppercase fw-bold d-block small text-danger" style="letter-spacing: 0.05em; font-size: 0.75rem;">Rejection Alert</span>
+                                <h4 class="h6 fw-semibold text-dark mb-0 mt-1">Your application for <strong><?php echo htmlspecialchars($rejectedApp['house_name'], ENT_QUOTES, 'UTF-8'); ?> (<?php echo htmlspecialchars($rejectedApp['room_name'], ENT_QUOTES, 'UTF-8'); ?>)</strong> has been declined.</h4>
+                                <p class="text-muted small mb-0 mt-1">The landlord has provided specific feedback regarding your request. Please review the reasons in your tracker to proceed or submit a correction.</p>
+                            </div>
+                        </div>
+                        <a href="<?php echo BASE_URL; ?>/tenant/applications" class="btn btn-danger rounded-2 fw-bold py-2 px-4 shadow-sm text-nowrap align-self-stretch align-self-md-center text-white">
+                            Review Application <i class="fa-solid fa-chevron-right ms-1 small"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+
     <!-- Feedback Alerts -->
     <?php if (isset($success) && $success): ?>
         <div class="alert alert-success d-flex align-items-center alert-dismissible fade show p-3 border-0 rounded-1 mb-4" style="background-color: #f0fff4; color: #22543d;" role="alert">

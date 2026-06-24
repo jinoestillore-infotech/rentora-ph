@@ -56,10 +56,12 @@ class TenantApplicationModel {
                        bh.town as house_town, 
                        bh.address as house_address,
                        r.room_name, 
-                       r.price as room_price
+                       r.price as room_price,
+                       tar.reason as rejection_reason
                 FROM tenant_applications ta
                 JOIN boarding_houses bh ON ta.boarding_house_id = bh.id
                 JOIN rooms r ON ta.room_id = r.id
+                LEFT JOIN tenant_application_rejections tar ON ta.id = tar.application_id
                 WHERE ta.tenant_id = :tenant_id
                 ORDER BY ta.created_at DESC";
 

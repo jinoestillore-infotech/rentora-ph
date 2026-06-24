@@ -179,7 +179,7 @@ $applications = $applications ?? [];
                         <div class="py-2 border-top border-bottom border-light-subtle my-2">
                             <span class="text-muted small d-block mb-1" style="font-size: 0.7rem; text-transform: uppercase;">Accommodation Target</span>
                             <span class="text-dark fw-bold d-block" style="font-size: 0.85rem;"><?php echo htmlspecialchars($app['house_name'], ENT_QUOTES, 'UTF-8'); ?></span>
-                            <span class="text-muted small d-block" style="font-size: 0.8rem;">Layout: <?php echo htmlspecialchars($app['room_name'], ENT_QUOTES, 'UTF-8'); ?> (₱<?php echo number_format($app['room_price'], 2); ?>)</span>
+                            <span class="text-muted small d-block" style="font-size: 0.8rem;"><strong>Layout:</strong> <?php echo htmlspecialchars($app['room_name'], ENT_QUOTES, 'UTF-8'); ?> (₱<?php echo number_format($app['room_price'], 2); ?>)</span>
                         </div>
 
                         <div class="d-grid mt-2">

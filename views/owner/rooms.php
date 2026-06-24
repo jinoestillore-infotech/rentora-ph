@@ -4,6 +4,8 @@
  * File Name: rooms.php
  * Description: Clean, modern, and professional Boarding House Dashboard for managing individual rooms.
  */
+use App\Core\Security;
+
 $title = "Manage Rooms";
 require_once dirname(__DIR__) . '/templates/header.php';
 
@@ -237,7 +239,7 @@ $house = $house ?? [];
             <div class="modal-footer border-top border-light-subtle py-2">
                 <button type="button" class="btn btn-light btn-sm rounded-1" data-bs-dismiss="modal">Cancel</button>
                 <form action="<?php echo BASE_URL; ?>/owner/room/delete" method="POST" class="d-inline">
-                    <?php echo \App\Core\Security::csrfField(); ?>
+                    <?php echo Security::csrfField(); ?>
                     <input type="hidden" name="boarding_house_id" value="<?php echo (int)$house['id']; ?>">
                     <input type="hidden" id="delete-room-id" name="room_id" value="">
                     <button type="submit" class="btn btn-danger btn-sm rounded-1 px-4">Permanently Delete</button>

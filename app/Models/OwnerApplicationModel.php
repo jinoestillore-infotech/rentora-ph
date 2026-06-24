@@ -72,6 +72,22 @@ class OwnerApplicationModel {
     }
 
     /**
+     * Writes/logs the reason why a tenant application was rejected by the owner.
+     */
+    public function saveRejectionReason(int $applicationId, string $reason): bool {
+        $sql = "INSERT INTO tenant_application_rejections (application_id, reason) 
+                VALUES (:application_id, :reason)
+                ON DUPLICATE KEY UPDATE reason = :reason_update, updated_at = CURRENT_TIMESTAMP";
+        
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':application_id' => $applicationId,
+            ':reason'         => $reason,
+            ':reason_update'  => $reason
+        ]);
+    }
+
+    /**
      * Decrement available bed count inside a room when an application gets approved.
      */
     public function decrementRoomBeds(int $roomId): bool {

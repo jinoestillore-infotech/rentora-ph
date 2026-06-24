@@ -9,6 +9,8 @@ namespace App\Controllers;
 
 use App\Core\Security;
 use App\Services\TenantService;
+use App\Models\TenantApplicationModel;
+
 use Exception;
 
 class TenantController {
@@ -39,6 +41,7 @@ class TenantController {
 
         $stats = [];
         $recent = [];
+        $rejectedApps = [];
 
         // Flush active flash alerts
         $success = $_SESSION['success'] ?? null;
@@ -49,6 +52,14 @@ class TenantController {
             $dashboardData = $this->tenantService->getDashboardData();
             $stats = $dashboardData['stats'];
             $recent = $dashboardData['recent'];
+
+            // Retrieve tenant's custom applications and filter to only pending/rejected feedback
+            $appModel = new TenantApplicationModel();
+            $tenantId = (int)$_SESSION['user_id'];
+            $allApps = $appModel->getApplicationsByTenantId($tenantId);
+            $rejectedApps = array_filter($allApps, function($app) {
+                return $app['status'] === 'Rejected';
+            });
         } catch (Exception $e) {
             $error = $e->getMessage();
         }
