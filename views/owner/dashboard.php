@@ -96,6 +96,32 @@ require_once dirname(__DIR__) . '/templates/header.php';
         </div>
     <?php endif; ?>
 
+    <!-- Dynamic Pending Tenant Applications Alert Notification -->
+    <?php 
+    $pendingAppsCount = $pendingAppsCount ?? 0;
+    if ($pendingAppsCount > 0): 
+    ?>
+        <div class="col-12 mt-3 mb-4">
+            <div class="card bg-warning-subtle border-0 rounded-3 shadow-sm" style="background-color: #fff3cd !important; border: 1px solid #ffeeba !important;">
+                <div class="card-body p-3 p-sm-4 d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="text-warning fs-3 mt-1">
+                            <i class="fa-solid fa-circle-exclamation text-warning" style="color: #856404 !important;"></i>
+                        </div>
+                        <div>
+                            <span class="text-uppercase fw-bold d-block small" style="letter-spacing: 0.05em; font-size: 0.75rem; color: #856404;">Action Required</span>
+                            <h4 class="h6 fw-semibold text-dark mb-0 mt-1">You have <?php echo $pendingAppsCount; ?> pending tenant application<?php echo $pendingAppsCount > 1 ? 's' : ''; ?> awaiting review.</h4>
+                            <p class="text-muted small mb-0 mt-1">Inspect tenant identity verifications and assign room vacancies immediately to secure bookings.</p>
+                        </div>
+                    </div>
+                    <a href="<?php echo BASE_URL; ?>/owner/applications" class="btn btn-warning rounded-2 fw-bold py-2 px-4 shadow-sm text-nowrap align-self-stretch align-self-md-center text-dark" style="background-color: #ffc107 !important; border-color: #ffc107 !important;">
+                        Review Inbox <i class="fa-solid fa-chevron-right ms-1 small"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+    
     <!-- Alert Notifications -->
     <?php if (isset($success)): ?>
         <div class="alert alert-success d-flex align-items-center alert-dismissible fade show p-3 border-0 rounded-1 mb-4" style="background-color: #f0fff4; color: #22543d;" role="alert">

@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Core\Security;
 use App\Models\BoardingHouse;
+use App\Models\OwnerApplicationModel;
+
 use Exception;
 
 class OwnerController {
@@ -48,6 +50,13 @@ class OwnerController {
             return $house['status'] === 'Rejected';
         }));
         
+        // Fetch pending tenant applications count
+        $appModel = new OwnerApplicationModel();
+        $allApplications = $appModel->getApplicationsByOwnerId($ownerId);
+        $pendingAppsCount = count(array_filter($allApplications, function($app) {
+            return $app['status'] === 'Pending';
+        }));
+
         // Flash message handling
         $success = $_SESSION['success'] ?? null;
         $error = $_SESSION['error'] ?? null;
